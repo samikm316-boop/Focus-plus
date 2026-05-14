@@ -1,19 +1,34 @@
-import TopBar from "../components/TopBar";
-import ThemeToggle from "../components/ThemeToggle";
+import React, {
+  useContext,
+} from "react";
 
-export default function SettingsScreen({ setSidebarOpen }) {
+import { ThemeContext } from "../../context/ThemeContext";
+
+import GradientButton from "../../components/ui/GradientButton";
+
+export default function SettingsScreen() {
+  const { mode, toggleTheme } =
+    useContext(ThemeContext);
+
   return (
-    <div className="screen">
-      <TopBar
-        title="Settings"
-        setSidebarOpen={setSidebarOpen}
+    <div>
+      <h1
+        style={{
+          color: "white",
+          marginBottom: "20px",
+        }}
+      >
+        Settings
+      </h1>
+
+      <GradientButton
+        title={`Switch to ${
+          mode === "dark"
+            ? "Light"
+            : "Dark"
+        } Mode`}
+        onClick={toggleTheme}
       />
-
-      <div className="settings-card card">
-        <h3>Appearance</h3>
-
-        <ThemeToggle />
-      </div>
     </div>
   );
 }
