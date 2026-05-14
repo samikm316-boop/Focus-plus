@@ -1,14 +1,26 @@
-import axios from "axios";
+const BASE_URL = "https://your-backend-url.com"; // change this later
 
-const API = axios.create({
-  baseURL: "https://focus-plus.onrender.com/api",
-});
+export const api = {
+  async get(endpoint, token) {
+    const res = await fetch(`${BASE_URL}${endpoint}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    });
+    return res.json();
+  },
 
-// attach token automatically
-API.interceptors.request.use((req) => {
-  const token = localStorage.getItem("token");
-  if (token) req.headers.Authorization = `Bearer ${token}`;
-  return req;
-});
-
-export default API;
+  async post(endpoint, body, token) {
+    const res = await fetch(`${BASE_URL}${endpoint}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+      body: JSON.stringify(body),
+    });
+    return res.json();
+  },
+};
