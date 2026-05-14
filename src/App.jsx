@@ -2,7 +2,7 @@ import React from "react";
 
 import { ThemeProvider } from "./context/ThemeContext";
 
-import RootNavigator from "./navigation/RootNavigator";
+import RootNavigator from "./navigation/RootNavigator.jsx";
 
 export default function App() {
   return (
