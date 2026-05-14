@@ -1,25 +1,19 @@
 import React from "react";
-import { View } from "react-native";
 
-export default function GlassCard({ children, style }) {
+export default function GlassCard({ children, style = {} }) {
   return (
-    <View
-      style={[
-        {
-          backgroundColor: "rgba(255,255,255,0.06)",
-          borderRadius: 18,
-          padding: 16,
-          borderWidth: 1,
-          borderColor: "rgba(255,255,255,0.08)",
-          shadowColor: "#000",
-          shadowOpacity: 0.3,
-          shadowRadius: 10,
-          elevation: 5,
-        },
-        style,
-      ]}
+    <div
+      style={{
+        background: "rgba(255,255,255,0.06)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: "18px",
+        padding: "16px",
+        backdropFilter: "blur(12px)",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+        ...style,
+      }}
     >
       {children}
-    </View>
+    </div>
   );
 }
