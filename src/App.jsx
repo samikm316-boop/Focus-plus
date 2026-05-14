@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ThemeProvider } from "./context/ThemeContext";
+import { ThemeProvider } from "./context/ThemeContext.jsx";
 
 import RootNavigator from "./navigation/RootNavigator.jsx";
 
