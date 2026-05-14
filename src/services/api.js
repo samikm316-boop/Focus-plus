@@ -1,8 +1,14 @@
 import axios from "axios";
-import { BASE_URL } from "../utils/constants";
 
-const api = axios.create({
-  baseURL: BASE_URL,
+const API = axios.create({
+  baseURL: "https://focus-plus.onrender.com/api",
 });
 
-export default api;
+// attach token automatically
+API.interceptors.request.use((req) => {
+  const token = localStorage.getItem("token");
+  if (token) req.headers.Authorization = `Bearer ${token}`;
+  return req;
+});
+
+export default API;
