@@ -1,50 +1,62 @@
 import React, { useState } from "react";
-import { View } from "react-native";
-import Backdrop from "../components/layout/Backdrop";
+
+import Sidebar from "../components/layout/Sidebar";
 
 import HomeScreen from "../screens/Home/HomeScreen";
+
 import StudyScreen from "../screens/Study/StudyScreen";
+
 import ChatScreen from "../screens/FocusAI/ChatScreen";
-import ProfileScreen from "../screens/Profile/ProfileScreen";
+
 import SettingsScreen from "../screens/Settings/SettingsScreen";
 
 export default function RootNavigator() {
-  const [active, setActive] = useState("home");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [active, setActive] =
+    useState("home");
 
   const renderScreen = () => {
     switch (active) {
       case "home":
-        return <HomeScreen openSidebar={() => setSidebarOpen(true)} />;
+        return <HomeScreen />;
 
       case "study":
-        return <StudyScreen openSidebar={() => setSidebarOpen(true)} />;
+        return <StudyScreen />;
 
-      case "ai":
-        return <ChatScreen openSidebar={() => setSidebarOpen(true)} />;
-
-      case "profile":
-        return <ProfileScreen openSidebar={() => setSidebarOpen(true)} />;
+      case "focus ai":
+        return <ChatScreen />;
 
       case "settings":
-        return <SettingsScreen openSidebar={() => setSidebarOpen(true)} />;
+        return <SettingsScreen />;
 
       default:
-        return <HomeScreen openSidebar={() => setSidebarOpen(true)} />;
+        return <HomeScreen />;
     }
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      {renderScreen()}
+    <div
+      style={{
+        display: "flex",
 
-      {sidebarOpen && (
-        <Sidebar
-          active={active}
-          setActive={setActive}
-          close={() => setSidebarOpen(false)}
-        />
-      )}
-    </View>
+        background: "#0B1220",
+
+        minHeight: "100vh",
+      }}
+    >
+      <Sidebar
+        active={active}
+        setActive={setActive}
+      />
+
+      <div
+        style={{
+          flex: 1,
+
+          padding: "20px",
+        }}
+      >
+        {renderScreen()}
+      </div>
+    </div>
   );
-          }
+}
