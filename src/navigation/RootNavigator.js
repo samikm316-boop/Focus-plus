@@ -40,7 +40,8 @@ export default function RootNavigator() {
 
         background: "#0B1220",
 
-        minHeight: "100vh",
+        height: "100vh",
+overflow: "hidden",
       }}
     >
       <Sidebar
