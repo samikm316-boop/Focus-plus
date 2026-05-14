@@ -1,21 +1,17 @@
-const BASE_URL = "https://focus-plus.onrender.com";
+import axios from "axios";
 
-export const apiRequest = async (endpoint, options = {}) => {
+const API = axios.create({
+  baseURL: "https://focus-plus.onrender.com/api",
+});
+
+API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
 
-  const res = await fetch(BASE_URL + endpoint, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : "",
-      ...options.headers,
-    },
-  });
-
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || "API Error");
+  if (token) {
+    req.headers.Authorization = `Bearer ${token}`;
   }
 
-  return res.json();
-};
+  return req;
+});
+
+export default API;
