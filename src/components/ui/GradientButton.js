@@ -1,26 +1,32 @@
 import React from "react";
-import { View } from "react-native";
 
-export default function GlassCard({ children, style }) {
+export default function GradientButton({
+  title,
+  onClick,
+}) {
   return (
-    <View
-      style={[
-        {
-          backgroundColor: "rgba(255,255,255,0.06)",
-          borderRadius: 18,
-          padding: 16,
-          borderWidth: 1,
-          borderColor: "rgba(255,255,255,0.08)",
+    <button
+      onClick={onClick}
+      style={{
+        background:
+          "linear-gradient(135deg,#7C3AED,#2563EB)",
 
-          shadowColor: "#000",
-          shadowOpacity: 0.35,
-          shadowRadius: 12,
-          elevation: 6,
-        },
-        style,
-      ]}
+        border: "none",
+
+        padding: "12px 16px",
+
+        borderRadius: "14px",
+
+        color: "white",
+
+        fontWeight: "600",
+
+        cursor: "pointer",
+
+        width: "100%",
+      }}
     >
-      {children}
-    </View>
+      {title}
+    </button>
   );
 }
