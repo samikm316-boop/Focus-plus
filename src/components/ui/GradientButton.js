@@ -1,31 +1,26 @@
 import React from "react";
-import { TouchableOpacity, Text, ActivityIndicator } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { View } from "react-native";
 
-export default function GradientButton({
-  title,
-  onPress,
-  loading,
-  colors = ["#7C3AED", "#2563EB"],
-}) {
+export default function GlassCard({ children, style }) {
   return (
-    <TouchableOpacity onPress={onPress} disabled={loading}>
-      <LinearGradient
-        colors={colors}
-        style={{
-          padding: 14,
-          borderRadius: 14,
-          alignItems: "center",
-        }}
-      >
-        {loading ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text style={{ color: "white", fontWeight: "600" }}>
-            {title}
-          </Text>
-        )}
-      </LinearGradient>
-    </TouchableOpacity>
+    <View
+      style={[
+        {
+          backgroundColor: "rgba(255,255,255,0.06)",
+          borderRadius: 18,
+          padding: 16,
+          borderWidth: 1,
+          borderColor: "rgba(255,255,255,0.08)",
+
+          shadowColor: "#000",
+          shadowOpacity: 0.35,
+          shadowRadius: 12,
+          elevation: 6,
+        },
+        style,
+      ]}
+    >
+      {children}
+    </View>
   );
 }
