@@ -1,0 +1,20 @@
+:root {
+  --bg: #0b1220;
+  --card: #121a2a;
+  --text: white;
+  --primary: #7c3aed;
+}
+
+[data-theme="light"] {
+  --bg: #f5f7fb;
+  --card: white;
+  --text: #0b1220;
+  --primary: #6d28d9;
+}
+
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
