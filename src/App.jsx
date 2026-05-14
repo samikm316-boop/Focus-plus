@@ -1,29 +1,55 @@
 import { useState } from "react";
-import Layout from "./components/Layout";
 
-import Home from "./pages/Home";
-import Study from "./pages/Study";
-import FocusAI from "./pages/FocusAI";
-import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
+import HomeScreen from "./screens/HomeScreen";
+import StudyScreen from "./screens/StudyScreen";
+import FocusAIScreen from "./screens/FocusAIScreen";
+import ProfileScreen from "./screens/ProfileScreen";
+import SettingsScreen from "./screens/SettingsScreen";
 
-export default function App() {
+import Sidebar from "./components/Sidebar";
+
+function App() {
   const [page, setPage] = useState("home");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const renderPage = () => {
     switch (page) {
-      case "home": return <Home />;
-      case "study": return <Study />;
-      case "ai": return <FocusAI />;
-      case "profile": return <Profile />;
-      case "settings": return <Settings />;
-      default: return <Home />;
+      case "study":
+        return <StudyScreen setSidebarOpen={setSidebarOpen} />;
+
+      case "ai":
+        return <FocusAIScreen setSidebarOpen={setSidebarOpen} />;
+
+      case "profile":
+        return <ProfileScreen setSidebarOpen={setSidebarOpen} />;
+
+      case "settings":
+        return <SettingsScreen setSidebarOpen={setSidebarOpen} />;
+
+      default:
+        return <HomeScreen setSidebarOpen={setSidebarOpen} />;
     }
   };
 
   return (
-    <Layout setPage={setPage}>
+    <div className="app">
+      {sidebarOpen && (
+        <>
+          <div
+            className="sidebar-overlay"
+            onClick={() => setSidebarOpen(false)}
+          />
+
+          <Sidebar
+            setPage={setPage}
+            setSidebarOpen={setSidebarOpen}
+          />
+        </>
+      )}
+
       {renderPage()}
-    </Layout>
+    </div>
   );
 }
+
+export default App;
