@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View } from "react-native";
-import Sidebar from "../components/layout/Sidebar";
+import Backdrop from "../components/layout/Backdrop";
 
 import HomeScreen from "../screens/Home/HomeScreen";
 import StudyScreen from "../screens/Study/StudyScreen";
