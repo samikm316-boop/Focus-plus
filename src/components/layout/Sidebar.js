@@ -1,57 +1,71 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
 
-export default function Sidebar({ active, setActive, close }) {
-  const items = [
-    { key: "home", label: "Home" },
-    { key: "study", label: "Study" },
-    { key: "ai", label: "Focus AI" },
-    { key: "profile", label: "Profile" },
-    { key: "settings", label: "Settings" },
+export default function Sidebar({
+  active,
+  setActive,
+}) {
+  const tabs = [
+    "home",
+    "study",
+    "focus ai",
+    "profile",
+    "settings",
   ];
 
   return (
-    <View
+    <div
       style={{
-        position: "absolute",
-        left: 0,
-        top: 0,
-        bottom: 0,
-        width: 260,
-        backgroundColor: "#0B1220",
-        padding: 20,
-        zIndex: 100,
+        width: "250px",
+
+        background: "rgba(11,18,32,0.98)",
+
+        height: "100vh",
+
+        padding: "20px",
+
+        borderRight:
+          "1px solid rgba(255,255,255,0.05)",
       }}
     >
-      <Text
+      <h1
         style={{
           color: "white",
-          fontSize: 22,
-          fontWeight: "700",
-          marginBottom: 20,
+          marginBottom: "30px",
         }}
       >
         Focus+
-      </Text>
+      </h1>
 
-      {items.map((item) => (
-        <TouchableOpacity
-          key={item.key}
-          onPress={() => {
-            setActive(item.key);
-            close();
-          }}
+      {tabs.map((tab) => (
+        <button
+          key={tab}
+          onClick={() => setActive(tab)}
           style={{
-            padding: 14,
-            borderRadius: 12,
-            backgroundColor:
-              active === item.key ? "#7C3AED" : "transparent",
-            marginBottom: 10,
+            width: "100%",
+
+            background:
+              active === tab
+                ? "#7C3AED"
+                : "transparent",
+
+            border: "none",
+
+            color: "white",
+
+            padding: "14px",
+
+            marginBottom: "10px",
+
+            borderRadius: "12px",
+
+            textAlign: "left",
+
+            cursor: "pointer",
           }}
         >
-          <Text style={{ color: "white" }}>{item.label}</Text>
-        </TouchableOpacity>
+          {tab}
+        </button>
       ))}
-    </View>
+    </div>
   );
 }
