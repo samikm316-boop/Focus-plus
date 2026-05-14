@@ -54,6 +54,7 @@ overflow: "hidden",
           flex: 1,
 
           padding: "20px",
+          overflowY: "auto"
         }}
       >
         {renderScreen()}
