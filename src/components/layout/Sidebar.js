@@ -15,27 +15,57 @@ export default function Sidebar({
   return (
     <div
       style={{
-        width: "250px",
+        width: "260px",
 
-        background: "rgba(11,18,32,0.98)",
+        background:
+          "rgba(15,23,42,0.95)",
 
-        height: "100vh",
-
-        padding: "20px",
+        backdropFilter: "blur(14px)",
 
         borderRight:
-          "1px solid rgba(255,255,255,0.05)",
+          "1px solid rgba(255,255,255,0.06)",
+
+        padding: "22px",
+
+        display: "flex",
+
+        flexDirection: "column",
+
+        gap: "12px",
       }}
     >
-      <h1
+      {/* LOGO */}
+      <div
         style={{
-          color: "white",
-          marginBottom: "30px",
+          marginBottom: "20px",
         }}
       >
-        Focus+
-      </h1>
+        <h1
+          style={{
+            color: "white",
 
+            fontSize: "28px",
+
+            fontWeight: "700",
+          }}
+        >
+          Focus+
+        </h1>
+
+        <p
+          style={{
+            color: "#9CA3AF",
+
+            fontSize: "13px",
+
+            marginTop: "4px",
+          }}
+        >
+          Productivity Reimagined
+        </p>
+      </div>
+
+      {/* TABS */}
       {tabs.map((tab) => (
         <button
           key={tab}
@@ -45,25 +75,32 @@ export default function Sidebar({
 
             background:
               active === tab
-                ? "#7C3AED"
+                ? "linear-gradient(135deg,#7C3AED,#2563EB)"
                 : "transparent",
 
-            border: "none",
+            border:
+              active === tab
+                ? "none"
+                : "1px solid rgba(255,255,255,0.05)",
 
             color: "white",
 
-            padding: "14px",
+            padding: "15px",
 
-            marginBottom: "10px",
-
-            borderRadius: "12px",
+            borderRadius: "14px",
 
             textAlign: "left",
 
+            fontSize: "15px",
+
+            fontWeight: "500",
+
             cursor: "pointer",
+
+            transition: "0.2s",
           }}
         >
-          {tab}
+          {tab.toUpperCase()}
         </button>
       ))}
     </div>
