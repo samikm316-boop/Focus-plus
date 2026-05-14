@@ -1,19 +1,21 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "https://focus-plus.onrender.com";
+const BASE_URL = "https://focus-plus.onrender.com";
 
-export async function apiRequest(endpoint, method = "GET", body, token) {
+export const apiRequest = async (endpoint, options = {}) => {
+  const token = localStorage.getItem("token");
+
   const res = await fetch(BASE_URL + endpoint, {
-    method,
+    ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
+      Authorization: token ? `Bearer ${token}` : "",
+      ...options.headers,
     },
-    body: body ? JSON.stringify(body) : undefined
   });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || "API Error");
+    const err = await res.json();
+    throw new Error(err.message || "API Error");
   }
 
   return res.json();
-}
+};
