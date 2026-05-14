@@ -1,39 +1,59 @@
-import { useState } from "react";
+import {
+  House,
+  BookOpen,
+  Brain,
+  User,
+  Settings,
+} from "lucide-react";
 
-export default function Sidebar({ setPage }) {
-  const [open, setOpen] = useState(false);
-
-  const menu = [
-    { name: "Home", page: "home" },
-    { name: "Study", page: "study" },
-    { name: "Focus AI", page: "ai" },
-    { name: "Profile", page: "profile" },
-    { name: "Settings", page: "settings" }
+export default function Sidebar({ setPage, setSidebarOpen }) {
+  const items = [
+    {
+      name: "Home",
+      icon: <House size={20} />,
+      page: "home",
+    },
+    {
+      name: "Study",
+      icon: <BookOpen size={20} />,
+      page: "study",
+    },
+    {
+      name: "Focus AI",
+      icon: <Brain size={20} />,
+      page: "ai",
+    },
+    {
+      name: "Profile",
+      icon: <User size={20} />,
+      page: "profile",
+    },
+    {
+      name: "Settings",
+      icon: <Settings size={20} />,
+      page: "settings",
+    },
   ];
 
   return (
-    <>
-      <div className="topbar">
-        <button onClick={() => setOpen(!open)}>☰</button>
-        <h2>FOCUS+</h2>
-      </div>
+    <div className="sidebar">
+      <div className="sidebar-logo">FOCUS+</div>
 
-      {open && (
-        <div className="sidebar">
-          {menu.map((item) => (
-            <div
-              key={item.page}
-              onClick={() => {
-                setPage(item.page);
-                setOpen(false);
-              }}
-              className="sidebar-item"
-            >
-              {item.name}
-            </div>
-          ))}
-        </div>
-      )}
-    </>
+      <div className="sidebar-menu">
+        {items.map((item) => (
+          <button
+            key={item.page}
+            className="sidebar-item"
+            onClick={() => {
+              setPage(item.page);
+              setSidebarOpen(false);
+            }}
+          >
+            {item.icon}
+            <span>{item.name}</span>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
