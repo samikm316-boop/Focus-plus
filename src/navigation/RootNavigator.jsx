@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 
-import Sidebar from "../components/layout/Sidebar";
+import Sidebar from "../components/layout/Sidebar.jsx";
 
-import HomeScreen from "../screens/Home/HomeScreen";
+import HomeScreen from "../screens/Home/HomeScreen.jsx";
 
-import StudyScreen from "../screens/Study/StudyScreen";
+import StudyScreen from "../screens/Study/StudyScreen.jsx";
 
-import ChatScreen from "../screens/FocusAI/ChatScreen";
+import ChatScreen from "../screens/FocusAI/ChatScreen.jsx";
 
-import SettingsScreen from "../screens/Settings/SettingsScreen";
+import SettingsScreen from "../screens/Settings/SettingsScreen.jsx";
 
 export default function RootNavigator() {
   const [active, setActive] =
