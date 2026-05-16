@@ -8,55 +8,47 @@ import SettingsScreen from "./screens/Settings/SettingsScreen";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("home");
-
-  const user = {
-    username: "USER",
-  };
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const renderScreen = () => {
     switch (activeTab) {
       case "home":
-        return <HomeScreen />;
+        return (
+          <HomeScreen openSidebar={() => setSidebarOpen(true)} />
+        );
 
       case "study":
-        return <StudyScreen />;
+        return (
+          <StudyScreen openSidebar={() => setSidebarOpen(true)} />
+        );
 
       case "focus":
-        return <ChatScreen />;
+        return (
+          <ChatScreen openSidebar={() => setSidebarOpen(true)} />
+        );
 
       case "settings":
-        return <SettingsScreen />;
+        return (
+          <SettingsScreen openSidebar={() => setSidebarOpen(true)} />
+        );
 
       default:
-        return <HomeScreen />;
+        return (
+          <HomeScreen openSidebar={() => setSidebarOpen(true)} />
+        );
     }
   };
 
   return (
-    <div style={styles.app}>
+    <div style={{ display: "flex" }}>
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        user={user}
-        onLogout={() => alert("logout")}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
       />
 
-      <div style={styles.screen}>{renderScreen()}</div>
+      <div style={{ flex: 1 }}>{renderScreen()}</div>
     </div>
   );
 }
-
-const styles = {
-  app: {
-    display: "flex",
-    height: "100vh",
-    width: "100vw",
-    overflow: "hidden",
-    background: "#0B1220",
-  },
-
-  screen: {
-    flex: 1,
-    overflowY: "auto",
-  },
-};
