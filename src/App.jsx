@@ -13,12 +13,13 @@ export default function App() {
   const openSidebar = () => setSidebarOpen(true);
   const closeSidebar = () => setSidebarOpen(false);
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    closeSidebar(); // IMPORTANT: closes sidebar on navigation
+  };
+
   const renderScreen = () => {
-    const props = {
-      openSidebar,
-      closeSidebar,
-      setActiveTab,
-    };
+    const props = { openSidebar };
 
     switch (activeTab) {
       case "home":
@@ -38,10 +39,7 @@ export default function App() {
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={(tab) => {
-          setActiveTab(tab);
-          setSidebarOpen(false);
-        }}
+        setActiveTab={handleTabChange}
         sidebarOpen={sidebarOpen}
         closeSidebar={closeSidebar}
       />
