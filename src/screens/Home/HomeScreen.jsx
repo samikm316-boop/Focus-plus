@@ -69,7 +69,22 @@ export default function HomeScreen({
         }}
       >
         <button
-          style={{
+  onClick={openSidebar}
+  style={{
+    border: "none",
+    background: "transparent",
+    fontSize: "34px",
+    cursor: "pointer",
+    width: "52px",
+    height: "52px",
+    borderRadius: "16px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }}
+>
+  ☰
+</button>
             border: "none",
             background: "transparent",
             fontSize: "30px",
