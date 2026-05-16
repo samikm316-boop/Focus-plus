@@ -74,11 +74,46 @@ export default function HomeScreen({
     <div
       style={{
         minHeight: "100vh",
-        background: "#F5F6FA",
+        background:
+          "linear-gradient(180deg,#fdf4ff 0%,#eef2ff 45%,#f5f7ff 100%)",
         padding: "18px",
         paddingBottom: "120px",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
+      {/* BACKGROUND GLOWS */}
+
+      <div
+        style={{
+          position: "fixed",
+          top: "-120px",
+          right: "-100px",
+          width: "280px",
+          height: "280px",
+          borderRadius: "50%",
+          background:
+            "rgba(236,72,153,0.18)",
+          filter: "blur(70px)",
+          zIndex: 0,
+        }}
+      />
+
+      <div
+        style={{
+          position: "fixed",
+          bottom: "-120px",
+          left: "-100px",
+          width: "260px",
+          height: "260px",
+          borderRadius: "50%",
+          background:
+            "rgba(96,165,250,0.18)",
+          filter: "blur(70px)",
+          zIndex: 0,
+        }}
+      />
+
       {/* HEADER */}
 
       <div
@@ -164,6 +199,8 @@ export default function HomeScreen({
       <div
         style={{
           background: "white",
+          position: "relative",
+          zIndex: 2,
           borderRadius: "32px",
           padding: "18px",
           boxShadow:
@@ -486,6 +523,8 @@ export default function HomeScreen({
       <div
         style={{
           borderRadius: "32px",
+          position: "relative",
+          zIndex: 2,
           padding: "34px 26px",
           marginTop: "18px",
           color: "white",
@@ -494,7 +533,6 @@ export default function HomeScreen({
             "linear-gradient(135deg,#f472b6,#8b5cf6,#60a5fa)",
           boxShadow:
             "0 20px 40px rgba(139,92,246,0.25)",
-          position: "relative",
           overflow: "hidden",
         }}
       >
@@ -566,6 +604,8 @@ function Section({
     <div
       style={{
         background: "white",
+        position: "relative",
+        zIndex: 2,
         borderRadius: "28px",
         padding: "22px",
         marginBottom: "18px",
@@ -747,4 +787,5 @@ function MiniStat({
       </div>
     </div>
   );
-            }
+                }
+        
