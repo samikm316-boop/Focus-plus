@@ -1,33 +1,61 @@
-const API_BASE =
+const API =
   "https://focus-plus.onrender.com";
 
-export async function getDashboard() {
+/* =========================
+   TOKEN
+========================= */
+
+export function getToken() {
+  return localStorage.getItem("token");
+}
+
+/* =========================
+   USER
+========================= */
+
+export async function getCurrentUser() {
   try {
     const response = await fetch(
-      `${API_BASE}/dashboard`,
+      `${API}/api/users/me`,
       {
         headers: {
-          "Content-Type":
-            "application/json",
-
           Authorization:
-            `Bearer ${
-              localStorage.getItem("token")
-            }`,
+            `Bearer ${getToken()}`,
         },
       }
     );
 
-    if (!response.ok) {
-      throw new Error(
-        "Failed to fetch dashboard"
-      );
-    }
+    return await response.json();
+  } catch (error) {
+    console.error(
+      "USER ERROR:",
+      error
+    );
+
+    return null;
+  }
+}
+
+/* =========================
+   XP
+========================= */
+
+export async function getXP() {
+  try {
+    const response = await fetch(
+      `${API}/api/xp`,
+      {
+        headers: {
+          Authorization:
+            `Bearer ${getToken()}`,
+        },
+      }
+    );
 
     return await response.json();
   } catch (error) {
     console.error(
-      "Dashboard API Error:",
+      "XP ERROR:",
       error
     );
 
@@ -42,27 +70,33 @@ export async function getDashboard() {
 export async function getNotes() {
   try {
     const response = await fetch(
-      `${API_BASE}/notes`,
+      `${API}/api/study/notes`,
       {
         headers: {
           Authorization:
-            `Bearer ${
-              localStorage.getItem("token")
-            }`,
+            `Bearer ${getToken()}`,
         },
       }
     );
 
     return await response.json();
   } catch (error) {
-    console.error(error);
+    console.error(
+      "NOTES ERROR:",
+      error
+    );
+
+    return [];
   }
 }
 
-export async function createNote(data) {
+export async function createNote(
+  title,
+  content
+) {
   try {
     const response = await fetch(
-      `${API_BASE}/notes`,
+      `${API}/api/study/notes`,
       {
         method: "POST",
 
@@ -71,18 +105,24 @@ export async function createNote(data) {
             "application/json",
 
           Authorization:
-            `Bearer ${
-              localStorage.getItem("token")
-            }`,
+            `Bearer ${getToken()}`,
         },
 
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          title,
+          content,
+        }),
       }
     );
 
     return await response.json();
   } catch (error) {
-    console.error(error);
+    console.error(
+      "CREATE NOTE ERROR:",
+      error
+    );
+
+    return null;
   }
 }
 
@@ -93,33 +133,33 @@ export async function createNote(data) {
 export async function getFlashcards() {
   try {
     const response = await fetch(
-      `${API_BASE}/flashcards`,
+      `${API}/api/study/flashcards`,
       {
         headers: {
           Authorization:
-            `Bearer ${
-              localStorage.getItem("token")
-            }`,
+            `Bearer ${getToken()}`,
         },
       }
     );
 
     return await response.json();
   } catch (error) {
-    console.error(error);
+    console.error(
+      "FLASHCARD ERROR:",
+      error
+    );
+
+    return [];
   }
 }
 
-/* =========================
-   CHAT
-========================= */
-
-export async function sendMessage(
-  message
+export async function createFlashcard(
+  question,
+  answer
 ) {
   try {
     const response = await fetch(
-      `${API_BASE}/chat`,
+      `${API}/api/study/flashcards`,
       {
         method: "POST",
 
@@ -128,19 +168,63 @@ export async function sendMessage(
             "application/json",
 
           Authorization:
-            `Bearer ${
-              localStorage.getItem("token")
-            }`,
+            `Bearer ${getToken()}`,
         },
 
         body: JSON.stringify({
-          message,
+          question,
+          answer,
         }),
       }
     );
 
     return await response.json();
   } catch (error) {
-    console.error(error);
+    console.error(
+      "CREATE FLASHCARD ERROR:",
+      error
+    );
+
+    return null;
+  }
+}
+
+/* =========================
+   CHAT AI
+========================= */
+
+export async function sendAIMessage(
+  message,
+  type = "study"
+) {
+  try {
+    const response = await fetch(
+      `${API}/api/chat`,
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+
+          Authorization:
+            `Bearer ${getToken()}`,
+        },
+
+        body: JSON.stringify({
+          message,
+          type,
+        }),
+      }
+    );
+
+    return await response.json();
+  } catch (error) {
+    console.error(
+      "CHAT ERROR:",
+      error
+    );
+
+    return null;
   }
 }
