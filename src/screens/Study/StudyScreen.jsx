@@ -305,4 +305,9 @@ function Note({ title, type, date, highlight }) {
       </div>
     </div>
   );
-        }
+
+  export default function StudyScreen({
+  openSidebar,
+  studyTab,
+  setStudyTab,
+}) 
