@@ -3,7 +3,9 @@ import axios from "axios";
 
 const API_URL = "https://focus-plus.onrender.com";
 
-export default function HomeScreen() {
+export default function HomeScreen({
+  openSidebar,
+}) { 
   const [xp, setXp] = useState(0);
   const [notes, setNotes] = useState([]);
   const [flashcards, setFlashcards] = useState([]);
