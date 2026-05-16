@@ -36,12 +36,15 @@ export default function Sidebar({
         onClick={() => setSidebarOpen(false)}
         style={{
           position: "fixed",
-          inset: 0,
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
           background: "rgba(0,0,0,0.45)",
           backdropFilter: "blur(4px)",
           opacity: sidebarOpen ? 1 : 0,
           pointerEvents: sidebarOpen ? "auto" : "none",
-          transition: "0.3s",
+          transition: "opacity 0.3s ease",
           zIndex: 998,
         }}
       />
@@ -51,24 +54,35 @@ export default function Sidebar({
         style={{
           position: "fixed",
           top: 0,
-          transform: sidebarOpen
-  ? "translateX(0)"
-  : "translateX(-110%)",
+          left: 0,
+
           width: "260px",
           height: "100vh",
+
+          transform: sidebarOpen
+            ? "translateX(0)"
+            : "translateX(-100%)",
+
+          transition: "transform 0.35s ease",
+
           background:
             "linear-gradient(180deg,#0B1020,#09142B)",
-          transition: "0.35s ease",
+
           zIndex: 999,
+
           padding: "28px 20px",
+
           boxSizing: "border-box",
+
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
+
           boxShadow:
             "10px 0 40px rgba(0,0,0,0.35)",
         }}
       >
+        {/* TOP */}
         <div>
           {/* LOGO */}
           <div
@@ -98,7 +112,7 @@ export default function Sidebar({
             </p>
           </div>
 
-          {/* BUTTONS */}
+          {/* MENU */}
           <div
             style={{
               display: "flex",
@@ -117,19 +131,30 @@ export default function Sidebar({
                   width: "100%",
                   border: "none",
                   cursor: "pointer",
+
                   background:
                     activeTab === item.id
                       ? "linear-gradient(135deg,#7C3AED,#D946EF)"
                       : "transparent",
+
                   borderRadius: "22px",
+
                   padding: "18px",
+
                   color: "white",
+
                   fontSize: "18px",
+
                   fontWeight: "700",
+
                   display: "flex",
+
                   alignItems: "center",
+
                   gap: "14px",
-                  transition: "0.25s",
+
+                  transition: "all 0.25s ease",
+
                   boxShadow:
                     activeTab === item.id
                       ? "0 10px 25px rgba(124,58,237,0.35)"
@@ -137,19 +162,23 @@ export default function Sidebar({
                 }}
               >
                 <span>{item.icon}</span>
+
                 <span>{item.label}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* BOTTOM USER CARD */}
+        {/* USER CARD */}
         <div
           style={{
             background:
               "rgba(255,255,255,0.06)",
+
             borderRadius: "24px",
+
             padding: "16px",
+
             border:
               "1px solid rgba(255,255,255,0.08)",
           }}
@@ -157,7 +186,9 @@ export default function Sidebar({
           <div
             style={{
               color: "white",
+
               fontWeight: "700",
+
               fontSize: "18px",
             }}
           >
@@ -167,13 +198,20 @@ export default function Sidebar({
           <div
             style={{
               marginTop: "8px",
+
               display: "inline-block",
+
               padding: "6px 12px",
+
               borderRadius: "999px",
+
               background:
                 "linear-gradient(90deg,#D946EF,#6366F1)",
+
               color: "white",
+
               fontWeight: "700",
+
               fontSize: "13px",
             }}
           >
