@@ -6,7 +6,6 @@ import StudyScreen from "./screens/StudyScreen";
 import FocusAIScreen from "./screens/FocusAIScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import AuthScreen from "./screens/AuthScreen";
-import LoginScreen from "./screens/LoginScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -27,7 +26,7 @@ export default function App() {
   };
 
   if (!user) {
-    return <LoginScreen onLogin={setUser} />;
+  return <AuthScreen onLogin={setUser} />;
   }
 
   const renderScreen = () => {
