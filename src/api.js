@@ -1,5 +1,5 @@
 const API_BASE =
-  "YOUR_BACKEND_URL";
+  "https://focus-plus.onrender.com";
 
 export async function getDashboard() {
   try {
