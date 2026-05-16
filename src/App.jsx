@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
 
-import HomeScreen from "./screens/HomeScreen";
+import HomeScreen from "./screens/Home/HomeScreen";
 import StudyScreen from "./screens/StudyScreen";
 import FocusAIScreen from "./screens/FocusAIScreen";
 import SettingsScreen from "./screens/SettingsScreen";
