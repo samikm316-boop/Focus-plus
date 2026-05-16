@@ -1,10 +1,65 @@
 import React, { useState } from "react";
 
 import HomeScreen from "./screens/Home/HomeScreen";
+import StudyScreen from "./screens/Study/StudyScreen";
+import ChatScreen from "./screens/FocusAI/ChatScreen";
+import SettingsScreen from "./screens/Settings/SettingsScreen";
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] =
     useState(false);
+
+  const [screen, setScreen] =
+    useState("home");
+
+  const renderScreen = () => {
+    switch (screen) {
+      case "home":
+        return (
+          <HomeScreen
+            openSidebar={() =>
+              setSidebarOpen(true)
+            }
+          />
+        );
+
+      case "study":
+        return (
+          <StudyScreen
+            openSidebar={() =>
+              setSidebarOpen(true)
+            }
+          />
+        );
+
+      case "focus-ai":
+        return (
+          <ChatScreen
+            openSidebar={() =>
+              setSidebarOpen(true)
+            }
+          />
+        );
+
+      case "settings":
+        return (
+          <SettingsScreen
+            openSidebar={() =>
+              setSidebarOpen(true)
+            }
+          />
+        );
+
+      default:
+        return (
+          <HomeScreen
+            openSidebar={() =>
+              setSidebarOpen(true)
+            }
+          />
+        );
+    }
+  };
 
   return (
     <div
@@ -104,30 +159,59 @@ export default function App() {
           {/* MENU */}
 
           <SidebarButton
-            active
             icon="🏠"
             text="Home"
+            active={screen === "home"}
+            onClick={() => {
+              setScreen("home");
+              setSidebarOpen(false);
+            }}
           />
 
           <SidebarButton
             icon="📚"
             text="Study"
             badge="5"
+            active={screen === "study"}
+            onClick={() => {
+              setScreen("study");
+              setSidebarOpen(false);
+            }}
           />
 
           <SidebarButton
             icon="🤖"
             text="Focus AI"
+            active={
+              screen === "focus-ai"
+            }
+            onClick={() => {
+              setScreen("focus-ai");
+              setSidebarOpen(false);
+            }}
           />
 
           <SidebarButton
             icon="👤"
             text="Profile"
+            active={
+              screen === "profile"
+            }
+            onClick={() => {
+              setSidebarOpen(false);
+            }}
           />
 
           <SidebarButton
             icon="⚙️"
             text="Settings"
+            active={
+              screen === "settings"
+            }
+            onClick={() => {
+              setScreen("settings");
+              setSidebarOpen(false);
+            }}
           />
         </div>
 
@@ -218,11 +302,7 @@ export default function App() {
 
       {/* SCREEN */}
 
-      <HomeScreen
-        openSidebar={() =>
-          setSidebarOpen(true)
-        }
-      />
+      {renderScreen()}
     </div>
   );
 }
@@ -232,9 +312,11 @@ function SidebarButton({
   text,
   active,
   badge,
+  onClick,
 }) {
   return (
     <button
+      onClick={onClick}
       style={{
         width: "100%",
         border: "none",
