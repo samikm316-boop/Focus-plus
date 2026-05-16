@@ -1,114 +1,104 @@
-import React from "react";
-import { Menu, Plus, SlidersHorizontal } from "lucide-react";
+import React, { useMemo, useState } from "react";
+import { Menu, Plus, X, Trash2, Pencil } from "lucide-react";
 
-export default function StudyScreen({
-  openSidebar,
-  studyTab,
-  setStudyTab,
-}) {
-  const activeTab = studyTab;
-  const setActiveTab = setStudyTab;
+export default function StudyScreen({ openSidebar }) {
+  const [selectedSubject, setSelectedSubject] = useState("All");
+  const [filter, setFilter] = useState("all");
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
-  // Render content conditionally based on activeTab
-  function renderStudyContent() {
-    switch (activeTab) {
-      case "create":
-        return <div>Create Screen</div>;
+  const [form, setForm] = useState({
+    title: "",
+    subject: "Biology",
+    type: "plain",
+  });
 
-      case "notes":
-        return (
-          <>
-            {/* SUBJECTS */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "14px",
-              }}
-            >
-              <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800" }}>
-                SUBJECTS
-              </h2>
+  const [notes, setNotes] = useState([
+    {
+      id: 1,
+      title: "Cell Structure",
+      subject: "Biology",
+      type: "plain",
+      date: "20 May",
+    },
+    {
+      id: 2,
+      title: "Photosynthesis Deep Dive",
+      subject: "Biology",
+      type: "enhanced",
+      date: "18 May",
+    },
+    {
+      id: 3,
+      title: "Quadratic Equations",
+      subject: "Maths",
+      type: "plain",
+      date: "19 May",
+    },
+  ]);
 
-              <span style={{ color: "#7C3AED", fontWeight: "700", fontSize: "13px" }}>
-                View all
-              </span>
-            </div>
+  const subjects = ["All", "Biology", "Maths", "History"];
 
-            <div
-              style={{
-                display: "flex",
-                gap: "12px",
-                overflowX: "auto",
-                paddingBottom: "8px",
-              }}
-            >
-              <SubjectCard color="#DCFCE7" icon="🌿" name="Biology" count="12 notes" />
-              <SubjectCard color="#DBEAFE" icon="∑" name="Maths" count="15 notes" />
-              <SubjectCard color="#FFEDD5" icon="🏛️" name="History" count="8 notes" />
-              <SubjectCard color="#EDE9FE" icon="🧪" name="Chemistry" count="7 notes" />
-            </div>
+  const filteredNotes = useMemo(() => {
+    return notes.filter((n) => {
+      const subjectOk =
+        selectedSubject === "All" || n.subject === selectedSubject;
 
-            {/* NOTES HEADER */}
-            <div
-              style={{
-                marginTop: "24px",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800" }}>
-                NOTES
-              </h2>
+      const typeOk =
+        filter === "all" || n.type === filter;
 
-              <SlidersHorizontal size={18} color="#6B7280" />
-            </div>
+      return subjectOk && typeOk;
+    });
+  }, [notes, selectedSubject, filter]);
 
-            {/* FILTER CHIPS */}
-            <div
-              style={{
-                display: "flex",
-                gap: "10px",
-                marginTop: "12px",
-                marginBottom: "18px",
-              }}
-            >
-              <Chip label="All" active />
-              <Chip label="Plain" />
-              <Chip label="Enhanced" />
-            </div>
+  function resetForm() {
+    setForm({ title: "", subject: "Biology", type: "plain" });
+    setEditingId(null);
+  }
 
-            {/* NOTES LIST */}
-            <NoteGroup color="#22C55E" subject="Biology" count="12 notes">
-              <Note title="Cell Structure and Function" type="Plain Note" date="20 May" />
-              <Note title="Photosynthesis Process" type="Enhanced" date="18 May" highlight />
-            </NoteGroup>
+  function openCreate() {
+    resetForm();
+    setShowModal(true);
+  }
 
-            <NoteGroup color="#3B82F6" subject="Maths" count="15 notes">
-              <Note title="Quadratic Equations" type="Plain Note" date="19 May" />
-              <Note title="Algebraic Identities" type="Enhanced" date="17 May" highlight />
-            </NoteGroup>
+  function saveNote() {
+    if (!form.title.trim()) return;
 
-            <NoteGroup color="#F97316" subject="History" count="8 notes">
-              <Note title="World War 2 Overview" type="Plain Note" date="16 May" />
-            </NoteGroup>
-          </>
-        );
-
-      case "flashcards":
-        return <div>Flashcards Screen</div>;
-
-      case "quiz":
-        return <div>Quiz Screen</div>;
-
-      case "learn":
-        return <div>Learn Screen</div>;
-
-      default:
-        return <div>Notes Screen</div>;
+    if (editingId) {
+      setNotes((prev) =>
+        prev.map((n) =>
+          n.id === editingId
+            ? { ...n, ...form }
+            : n
+        )
+      );
+    } else {
+      setNotes((prev) => [
+        {
+          id: Date.now(),
+          ...form,
+          date: new Date().toLocaleDateString(),
+        },
+        ...prev,
+      ]);
     }
+
+    setShowModal(false);
+    resetForm();
+  }
+
+  function deleteNote(id) {
+    setNotes((prev) => prev.filter((n) => n.id !== id));
+  }
+
+  function editNote(note) {
+    setForm({
+      title: note.title,
+      subject: note.subject,
+      type: note.type,
+    });
+    setEditingId(note.id);
+    setShowModal(true);
   }
 
   return (
@@ -118,244 +108,225 @@ export default function StudyScreen({
         background: "#F6F7FB",
         padding: "18px",
         paddingBottom: "120px",
-        boxSizing: "border-box",
       }}
     >
-      {/* TOP BAR */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: "18px",
-        }}
-      >
-        <button
-          onClick={openSidebar}
-          style={{
-            width: "44px",
-            height: "44px",
-            borderRadius: "14px",
-            border: "none",
-            background: "white",
-            boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Menu size={22} />
+      {/* HEADER */}
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <button onClick={openSidebar}>
+          <Menu />
         </button>
 
-        <h1
-          style={{
-            margin: 0,
-            fontSize: "20px",
-            fontWeight: "800",
-            color: "#6D28D9",
-            letterSpacing: "1px",
-          }}
-        >
+        <h1 style={{ color: "#6D28D9", fontWeight: "800" }}>
           STUDY
         </h1>
 
-        <div style={{ width: "44px" }} />
+        <div style={{ width: 40 }} />
       </div>
 
-      {/* TOP ACTION TABS */}
+      {/* FILTERS */}
+      <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
+        {["all", "plain", "enhanced"].map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            style={{
+              padding: "8px 14px",
+              borderRadius: "999px",
+              border: "none",
+              background: filter === f ? "#EDE9FE" : "#F3F4F6",
+              fontWeight: "700",
+            }}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
+
+      {/* SUBJECTS */}
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
-          background: "white",
-          padding: "10px",
-          borderRadius: "18px",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
-          marginBottom: "22px",
+          gap: 10,
+          overflowX: "auto",
+          marginTop: 18,
         }}
       >
-        <Tab
-          icon="➕"
-          label="Create"
-          active={activeTab === "create"}
-          onClick={() => setActiveTab("create")}
-        />
-        <Tab
-          icon="📘"
-          label="Notes"
-          active={activeTab === "notes"}
-          onClick={() => setActiveTab("notes")}
-        />
-        <Tab
-          icon="📖"
-          label="Flashcards"
-          active={activeTab === "flashcards"}
-          onClick={() => setActiveTab("flashcards")}
-        />
-        <Tab
-          icon="🧪"
-          label="Quiz"
-          active={activeTab === "quiz"}
-          onClick={() => setActiveTab("quiz")}
-        />
-        <Tab
-          icon="🎓"
-          label="Learn"
-          active={activeTab === "learn"}
-          onClick={() => setActiveTab("learn")}
-        />
+        {subjects.map((s) => (
+          <div
+            key={s}
+            onClick={() => setSelectedSubject(s)}
+            style={{
+              padding: "10px 14px",
+              borderRadius: "14px",
+              background: selectedSubject === s ? "#6D28D9" : "white",
+              color: selectedSubject === s ? "white" : "#333",
+              fontWeight: "700",
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {s}
+          </div>
+        ))}
       </div>
 
-      {/* DYNAMIC CONTENT SWITCHER */}
-      {renderStudyContent()}
+      {/* NOTES */}
+      <div style={{ marginTop: 20 }}>
+        {filteredNotes.map((note) => (
+          <div
+            key={note.id}
+            style={{
+              background: "white",
+              padding: 14,
+              borderRadius: 16,
+              marginBottom: 10,
+              boxShadow: "0 10px 25px rgba(0,0,0,0.05)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <div style={{ fontWeight: 800 }}>{note.title}</div>
 
-      {/* FLOATING BUTTON */}
+              <div style={{ display: "flex", gap: 10 }}>
+                <Pencil
+                  size={16}
+                  onClick={() => editNote(note)}
+                  style={{ cursor: "pointer" }}
+                />
+                <Trash2
+                  size={16}
+                  onClick={() => deleteNote(note.id)}
+                  style={{ cursor: "pointer", color: "red" }}
+                />
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: 6,
+                fontSize: 12,
+                color: "#666",
+              }}
+            >
+              <span
+                style={{
+                  color: note.type === "enhanced" ? "#7C3AED" : "#555",
+                  fontWeight: "700",
+                }}
+              >
+                {note.type}
+              </span>
+              <span>{note.date}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* FLOAT BUTTON */}
       <button
+        onClick={openCreate}
         style={{
           position: "fixed",
-          right: "18px",
-          bottom: "18px",
-          width: "58px",
-          height: "58px",
-          borderRadius: "20px",
+          bottom: 20,
+          right: 20,
+          width: 58,
+          height: 58,
+          borderRadius: 20,
           border: "none",
           background: "linear-gradient(135deg,#7C3AED,#2563EB)",
           color: "white",
-          fontSize: "26px",
-          boxShadow: "0 18px 40px rgba(124,77,255,0.35)",
+          fontSize: 24,
         }}
       >
         <Plus />
       </button>
-    </div>
-  );
-}
 
-/* ===== SUB-COMPONENTS ===== */
-
-function Tab({ icon, label, active, onClick }) {
-  return (
-    <div
-      onClick={onClick}
-      style={{
-        flex: 1,
-        textAlign: "center",
-        padding: "8px",
-        borderRadius: "14px",
-        background: active ? "#F3E8FF" : "transparent",
-        color: active ? "#6D28D9" : "#6B7280",
-        fontWeight: "700",
-        fontSize: "12px",
-        cursor: "pointer",
-      }}
-    >
-      <div style={{ fontSize: "16px" }}>{icon}</div>
-      {label}
-      {active && (
+      {/* MODAL */}
+      {showModal && (
         <div
           style={{
-            height: "3px",
-            background: "#6D28D9",
-            marginTop: "6px",
-            borderRadius: "10px",
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.4)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
-        />
+        >
+          <div
+            style={{
+              background: "white",
+              width: "90%",
+              maxWidth: 360,
+              padding: 18,
+              borderRadius: 16,
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <h3>{editingId ? "Edit Note" : "Create Note"}</h3>
+              <X onClick={() => setShowModal(false)} />
+            </div>
+
+            <input
+              placeholder="Title"
+              value={form.title}
+              onChange={(e) =>
+                setForm({ ...form, title: e.target.value })
+              }
+              style={{
+                width: "100%",
+                padding: 10,
+                marginTop: 10,
+              }}
+            />
+
+            <select
+              value={form.subject}
+              onChange={(e) =>
+                setForm({ ...form, subject: e.target.value })
+              }
+              style={{ width: "100%", padding: 10, marginTop: 10 }}
+            >
+              <option>Biology</option>
+              <option>Maths</option>
+              <option>History</option>
+            </select>
+
+            <select
+              value={form.type}
+              onChange={(e) =>
+                setForm({ ...form, type: e.target.value })
+              }
+              style={{ width: "100%", padding: 10, marginTop: 10 }}
+            >
+              <option value="plain">Plain</option>
+              <option value="enhanced">Enhanced</option>
+            </select>
+
+            <button
+              onClick={saveNote}
+              style={{
+                width: "100%",
+                marginTop: 14,
+                padding: 12,
+                background: "#6D28D9",
+                color: "white",
+                border: "none",
+                borderRadius: 12,
+                fontWeight: "700",
+              }}
+            >
+              {editingId ? "Update Note" : "Save Note"}
+            </button>
+          </div>
+        </div>
       )}
-    </div>
-  );
-}
-
-function SubjectCard({ color, icon, name, count }) {
-  return (
-    <div
-      style={{
-        minWidth: "120px",
-        background: color,
-        padding: "14px",
-        borderRadius: "18px",
-      }}
-    >
-      <div style={{ fontSize: "20px" }}>{icon}</div>
-      <div style={{ fontWeight: "800", marginTop: "6px" }}>{name}</div>
-      <div style={{ fontSize: "12px", color: "#555" }}>{count}</div>
-    </div>
-  );
-}
-
-function Chip({ label, active }) {
-  return (
-    <div
-      style={{
-        padding: "8px 14px",
-        borderRadius: "999px",
-        background: active ? "#EDE9FE" : "#F3F4F6",
-        color: active ? "#6D28D9" : "#6B7280",
-        fontWeight: "700",
-        fontSize: "12px",
-      }}
-    >
-      {label}
-    </div>
-  );
-}
-
-function NoteGroup({ color, subject, count, children }) {
-  return (
-    <div style={{ marginBottom: "18px" }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          marginBottom: "10px",
-          fontWeight: "800",
-        }}
-      >
-        <div
-          style={{
-            width: "10px",
-            height: "10px",
-            borderRadius: "50%",
-            background: color,
-          }}
-        />
-        {subject}
-        <span style={{ color: "#9CA3AF", fontWeight: "600" }}>
-          • {count}
-        </span>
-      </div>
-      {children}
-    </div>
-  );
-}
-
-function Note({ title, type, date, highlight }) {
-  return (
-    <div
-      style={{
-        background: "white",
-        padding: "14px",
-        borderRadius: "16px",
-        marginBottom: "10px",
-        boxShadow: "0 10px 25px rgba(0,0,0,0.04)",
-        border: highlight ? "1px solid #A78BFA" : "none",
-      }}
-    >
-      <div style={{ fontWeight: "800" }}>{title}</div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginTop: "6px",
-          fontSize: "12px",
-          color: "#6B7280",
-        }}
-      >
-        <span style={{ color: highlight ? "#7C3AED" : "#6B7280" }}>
-          {type}
-        </span>
-        <span>{date}</span>
-      </div>
     </div>
   );
 }
