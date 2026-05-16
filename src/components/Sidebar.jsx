@@ -16,7 +16,7 @@ export default function Sidebar({
 
   return (
     <>
-      {/* overlay */}
+      {/* OVERLAY */}
       {sidebarOpen && (
         <div
           onClick={closeSidebar}
@@ -24,29 +24,30 @@ export default function Sidebar({
             position: "fixed",
             inset: 0,
             background: "rgba(0,0,0,0.5)",
-            zIndex: 10,
+            zIndex: 20,
           }}
         />
       )}
 
-      {/* sidebar */}
+      {/* SIDEBAR */}
       <div
         style={{
           position: "fixed",
           top: 0,
-          left: sidebarOpen ? 0 : "-280px",
+          left: 0,
           width: 280,
           height: "100vh",
           background: "#0B0F1A",
           color: "white",
           padding: 20,
+          transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
           transition: "0.3s ease",
-          zIndex: 20,
+          zIndex: 30,
           display: "flex",
           flexDirection: "column",
         }}
       >
-        {/* header */}
+        {/* HEADER */}
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <h2 style={{ margin: 0 }}>FOCUS+</h2>
 
@@ -57,13 +58,14 @@ export default function Sidebar({
               border: "none",
               color: "white",
               fontSize: 22,
+              cursor: "pointer",
             }}
           >
             <X />
           </button>
         </div>
 
-        {/* menu */}
+        {/* MENU */}
         <div style={{ marginTop: 30, display: "flex", flexDirection: "column", gap: 10 }}>
           {menu.map((item) => (
             <button
@@ -81,7 +83,6 @@ export default function Sidebar({
                 color: "white",
                 cursor: "pointer",
                 fontSize: 16,
-                transition: "0.2s",
               }}
             >
               {item.icon} {item.label}
