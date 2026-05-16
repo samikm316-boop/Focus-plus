@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import Sidebar from "./components/layout/Sidebar";
 
 import HomeScreen from "./screens/Home/HomeScreen";
@@ -10,43 +11,46 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const openSidebar = () => setSidebarOpen(true);
-  const closeSidebar = () => setSidebarOpen(false);
-
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    closeSidebar(); // IMPORTANT: closes sidebar on navigation
-  };
-
   const renderScreen = () => {
-    const props = { openSidebar };
-
     switch (activeTab) {
       case "home":
-        return <HomeScreen {...props} />;
+        return <HomeScreen openSidebar={() => setSidebarOpen(true)} />;
       case "study":
-        return <StudyScreen {...props} />;
+        return <StudyScreen openSidebar={() => setSidebarOpen(true)} />;
       case "focus":
-        return <ChatScreen {...props} />;
+        return <ChatScreen openSidebar={() => setSidebarOpen(true)} />;
       case "settings":
-        return <SettingsScreen {...props} />;
+        return <SettingsScreen openSidebar={() => setSidebarOpen(true)} />;
       default:
-        return <HomeScreen {...props} />;
+        return <HomeScreen openSidebar={() => setSidebarOpen(true)} />;
     }
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+    <div style={{ display: "flex" }}>
+      {/* SIDEBAR */}
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={handleTabChange}
+        setActiveTab={setActiveTab}
         sidebarOpen={sidebarOpen}
-        closeSidebar={closeSidebar}
+        setSidebarOpen={setSidebarOpen}
       />
 
-      <div style={{ flex: 1, overflow: "auto" }}>
-        {renderScreen()}
-      </div>
+      {/* OVERLAY */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.4)",
+            zIndex: 90,
+          }}
+        />
+      )}
+
+      {/* MAIN */}
+      <div style={{ flex: 1 }}>{renderScreen()}</div>
     </div>
   );
 }
