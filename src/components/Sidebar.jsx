@@ -18,59 +18,26 @@ export default function Sidebar({
   return (
     <>
       {/* HAMBURGER */}
-      <button
-        onClick={() => setOpen(!open)}
-        style={{
-          position: "absolute",
-          top: 15,
-          left: 15,
-          zIndex: 999,
-          background: "transparent",
-          color: "white",
-          fontSize: 24,
-          border: "none",
-        }}
-      >
+      <button style={styles.hamburger} onClick={() => setOpen(true)}>
         ☰
       </button>
 
       {/* OVERLAY */}
-      {open && (
-        <div
-          onClick={() => setOpen(false)}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            background: "rgba(0,0,0,0.6)",
-            backdropFilter: "blur(6px)",
-            zIndex: 10,
-          }}
-        />
-      )}
+      {open && <div style={styles.overlay} onClick={() => setOpen(false)} />}
 
       {/* SIDEBAR */}
-      <div
-        style={{
-          position: "fixed",
-          left: open ? 0 : "-260px",
-          top: 0,
-          width: 260,
-          height: "100%",
-          background: "#0B0F1A",
-          color: "white",
-          padding: 20,
-          transition: "0.3s",
-          zIndex: 20,
-          borderRight: "1px solid rgba(255,255,255,0.05)",
-        }}
-      >
-        {/* USER */}
-        <div style={{ marginBottom: 30 }}>
-          <h2>{user?.username}</h2>
-          <p style={{ color: "#9CA3AF" }}>Focus+ User</p>
+      <div style={{ ...styles.sidebar, left: open ? 0 : -280 }}>
+        
+        {/* USER CARD */}
+        <div style={styles.userBox}>
+          <div style={styles.avatar} />
+
+          <div>
+            <div style={{ fontWeight: 800 }}>{user?.username}</div>
+            <div style={{ fontSize: 12, color: "#9CA3AF" }}>
+              Focus+ User
+            </div>
+          </div>
         </div>
 
         {/* MENU */}
@@ -83,39 +50,103 @@ export default function Sidebar({
                 setOpen(false);
               }}
               style={{
-                padding: 12,
-                borderRadius: 10,
-                border: "none",
-                textAlign: "left",
+                ...styles.item,
                 background:
                   activeTab === item.id
-                    ? "rgba(99,102,241,0.3)"
-                    : "transparent",
-                color: "white",
-                cursor: "pointer",
+                    ? "linear-gradient(135deg,#7C3AED,#2563EB)"
+                    : "rgba(255,255,255,0.04)",
               }}
             >
-              {item.icon} {item.label}
+              <span>{item.icon}</span>
+              <span>{item.label}</span>
             </button>
           ))}
         </div>
 
         {/* LOGOUT */}
-        <button
-          onClick={onLogout}
-          style={{
-            marginTop: 30,
-            width: "100%",
-            padding: 12,
-            borderRadius: 10,
-            border: "none",
-            background: "red",
-            color: "white",
-          }}
-        >
+        <button onClick={onLogout} style={styles.logout}>
           Logout
         </button>
       </div>
     </>
   );
 }
+
+/* ================= STYLES ================= */
+
+const styles = {
+  hamburger: {
+    position: "fixed",
+    top: 16,
+    left: 16,
+    zIndex: 999,
+    fontSize: 22,
+    background: "rgba(255,255,255,0.06)",
+    border: "1px solid rgba(255,255,255,0.1)",
+    color: "white",
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+  },
+
+  overlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.5)",
+    backdropFilter: "blur(6px)",
+    zIndex: 10,
+  },
+
+  sidebar: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: 280,
+    height: "100%",
+    padding: 20,
+    background: "rgba(15,23,42,0.98)",
+    backdropFilter: "blur(18px)",
+    borderRight: "1px solid rgba(255,255,255,0.06)",
+    transition: "0.25s ease",
+    zIndex: 20,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
+
+  userBox: {
+    display: "flex",
+    gap: 12,
+    alignItems: "center",
+    marginBottom: 24,
+  },
+
+  avatar: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    background: "linear-gradient(135deg,#c084fc,#60a5fa)",
+  },
+
+  item: {
+    display: "flex",
+    gap: 10,
+    alignItems: "center",
+    padding: 14,
+    borderRadius: 14,
+    border: "none",
+    color: "white",
+    cursor: "pointer",
+    fontWeight: 600,
+  },
+
+  logout: {
+    marginTop: 20,
+    padding: 14,
+    borderRadius: 14,
+    border: "none",
+    background: "#ef4444",
+    color: "white",
+    fontWeight: 700,
+  },
+};
