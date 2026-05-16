@@ -1,14 +1,43 @@
 const API_BASE = "https://focus-plus.onrender.com";
 
 /* =========================
+   AUTH
+========================= */
+
+export async function login(email, password) {
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  });
+
+  return res.json();
+}
+
+export async function register(email, password, username) {
+  const res = await fetch(`${API_BASE}/auth/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password, username }),
+  });
+
+  return res.json();
+}
+
+/* =========================
    TOKEN
 ========================= */
+
 export function getToken() {
   return localStorage.getItem("token");
 }
 
 /* =========================
-   AUTH
+   USER
 ========================= */
 
 export async function getCurrentUser() {
