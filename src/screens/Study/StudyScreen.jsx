@@ -29,6 +29,16 @@ export default function StudyScreen({ openSidebar }) {
     });
   }, [notes, selectedSubject, filter]);
 
+  function resetForm() {
+    setForm({ title: "", subject: "Biology", type: "plain" });
+    setEditingId(null);
+  }
+
+  function openCreate() {
+    resetForm();
+    setShowModal(true);
+  }
+
   function saveNote() {
     if (!form.title.trim()) return;
 
@@ -48,8 +58,7 @@ export default function StudyScreen({ openSidebar }) {
     }
 
     setShowModal(false);
-    setEditingId(null);
-    setForm({ title: "", subject: "Biology", type: "plain" });
+    resetForm();
   }
 
   function deleteNote(id) {
@@ -64,30 +73,26 @@ export default function StudyScreen({ openSidebar }) {
 
   return (
     <div style={styles.page}>
-      
       {/* HEADER */}
       <div style={styles.header}>
-        <button style={styles.iconBtn} onClick={openSidebar}>
+        <button onClick={openSidebar} style={styles.iconBtn}>
           <Menu size={22} />
         </button>
 
-        <div style={styles.title}>STUDY</div>
+        <div style={styles.title}>Study</div>
 
-        <div style={{ width: 44 }} />
+        <div style={{ width: 42 }} />
       </div>
 
-      {/* FILTERS */}
+      {/* FILTER BAR */}
       <div style={styles.filterRow}>
         {["all", "plain", "enhanced"].map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
             style={{
-              ...styles.chip,
-              background:
-                filter === f
-                  ? "linear-gradient(135deg,#7C3AED,#2563EB)"
-                  : "rgba(255,255,255,0.7)",
+              ...styles.filterBtn,
+              background: filter === f ? "#7C3AED" : "#EEE",
               color: filter === f ? "white" : "#333",
             }}
           >
@@ -96,7 +101,7 @@ export default function StudyScreen({ openSidebar }) {
         ))}
       </div>
 
-      {/* SUBJECTS */}
+      {/* SUBJECT CHIPS */}
       <div style={styles.subjectRow}>
         {subjects.map((s) => (
           <div
@@ -104,11 +109,8 @@ export default function StudyScreen({ openSidebar }) {
             onClick={() => setSelectedSubject(s)}
             style={{
               ...styles.subjectChip,
-              background:
-                selectedSubject === s
-                  ? "linear-gradient(135deg,#7C3AED,#2563EB)"
-                  : "rgba(255,255,255,0.85)",
-              color: selectedSubject === s ? "white" : "#222",
+              background: selectedSubject === s ? "#111827" : "white",
+              color: selectedSubject === s ? "white" : "#111",
             }}
           >
             {s}
@@ -117,35 +119,35 @@ export default function StudyScreen({ openSidebar }) {
       </div>
 
       {/* NOTES */}
-      <div style={styles.notesList}>
+      <div style={styles.notesWrap}>
         {filteredNotes.map((note) => (
           <div key={note.id} style={styles.card}>
-            
             <div style={styles.cardTop}>
               <div style={styles.noteTitle}>{note.title}</div>
 
               <div style={styles.actions}>
                 <Pencil size={16} onClick={() => editNote(note)} />
-                <Trash2 size={16} onClick={() => deleteNote(note.id)} color="#ef4444" />
+                <Trash2 size={16} onClick={() => deleteNote(note.id)} />
               </div>
             </div>
 
             <div style={styles.cardBottom}>
-              <span style={{
-                fontWeight: 700,
-                color: note.type === "enhanced" ? "#7C3AED" : "#555"
-              }}>
+              <span
+                style={{
+                  color: note.type === "enhanced" ? "#7C3AED" : "#666",
+                  fontWeight: 700,
+                }}
+              >
                 {note.type.toUpperCase()}
               </span>
-
-              <span style={{ color: "#666" }}>{note.date}</span>
+              <span>{note.date}</span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* FLOAT BUTTON */}
-      <button onClick={() => setShowModal(true)} style={styles.fab}>
+      {/* FLOATING BUTTON */}
+      <button onClick={openCreate} style={styles.fab}>
         <Plus />
       </button>
 
@@ -153,29 +155,21 @@ export default function StudyScreen({ openSidebar }) {
       {showModal && (
         <div style={styles.modalOverlay}>
           <div style={styles.modal}>
-            
             <div style={styles.modalHeader}>
-              <h3 style={{ margin: 0 }}>
-                {editingId ? "Edit Note" : "Create Note"}
-              </h3>
-
-              <X onClick={() => setShowModal(false)} style={{ cursor: "pointer" }} />
+              <h3>{editingId ? "Edit Note" : "Create Note"}</h3>
+              <X onClick={() => setShowModal(false)} />
             </div>
 
             <input
               placeholder="Title"
               value={form.title}
-              onChange={(e) =>
-                setForm({ ...form, title: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
               style={styles.input}
             />
 
             <select
               value={form.subject}
-              onChange={(e) =>
-                setForm({ ...form, subject: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, subject: e.target.value })}
               style={styles.input}
             >
               <option>Biology</option>
@@ -185,9 +179,7 @@ export default function StudyScreen({ openSidebar }) {
 
             <select
               value={form.type}
-              onChange={(e) =>
-                setForm({ ...form, type: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, type: e.target.value })}
               style={styles.input}
             >
               <option value="plain">Plain</option>
@@ -204,13 +196,13 @@ export default function StudyScreen({ openSidebar }) {
   );
 }
 
-/* ================= DESIGN SYSTEM ================= */
+/* ================= STYLES ================= */
 
 const styles = {
   page: {
     minHeight: "100vh",
-    padding: 18,
-    background: "linear-gradient(180deg,#F6F7FB,#EEF2FF)",
+    background: "#F5F6FA",
+    padding: 16,
   },
 
   header: {
@@ -221,21 +213,16 @@ const styles = {
   },
 
   iconBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    border: "none",
     background: "white",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+    border: "none",
+    borderRadius: 12,
+    padding: 10,
   },
 
   title: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: 900,
-    letterSpacing: 1,
-    background: "linear-gradient(90deg,#7C3AED,#2563EB)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
+    color: "#111",
   },
 
   filterRow: {
@@ -244,41 +231,38 @@ const styles = {
     marginBottom: 14,
   },
 
-  chip: {
+  filterBtn: {
+    border: "none",
     padding: "8px 14px",
     borderRadius: 999,
-    border: "none",
     fontWeight: 700,
-    cursor: "pointer",
   },
 
   subjectRow: {
     display: "flex",
     gap: 10,
     overflowX: "auto",
-    paddingBottom: 6,
+    paddingBottom: 10,
   },
 
   subjectChip: {
     padding: "10px 14px",
     borderRadius: 14,
     fontWeight: 700,
-    cursor: "pointer",
     whiteSpace: "nowrap",
+    boxShadow: "0 6px 20px rgba(0,0,0,0.05)",
   },
 
-  notesList: {
-    marginTop: 16,
-    display: "flex",
-    flexDirection: "column",
-    gap: 12,
+  notesWrap: {
+    marginTop: 12,
   },
 
   card: {
     background: "white",
     padding: 14,
-    borderRadius: 18,
-    boxShadow: "0 12px 30px rgba(0,0,0,0.06)",
+    borderRadius: 16,
+    marginBottom: 12,
+    boxShadow: "0 10px 25px rgba(0,0,0,0.06)",
   },
 
   cardTop: {
@@ -288,7 +272,6 @@ const styles = {
 
   noteTitle: {
     fontWeight: 900,
-    fontSize: 15,
   },
 
   actions: {
@@ -300,27 +283,28 @@ const styles = {
   cardBottom: {
     display: "flex",
     justifyContent: "space-between",
-    marginTop: 8,
+    marginTop: 6,
     fontSize: 12,
+    color: "#666",
   },
 
   fab: {
     position: "fixed",
-    bottom: 22,
-    right: 22,
-    width: 58,
-    height: 58,
+    bottom: 20,
+    right: 20,
+    width: 56,
+    height: 56,
     borderRadius: 18,
     border: "none",
     background: "linear-gradient(135deg,#7C3AED,#2563EB)",
     color: "white",
-    boxShadow: "0 18px 40px rgba(124,58,237,0.35)",
+    fontSize: 22,
   },
 
   modalOverlay: {
     position: "fixed",
     inset: 0,
-    background: "rgba(0,0,0,0.45)",
+    background: "rgba(0,0,0,0.4)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -328,16 +312,15 @@ const styles = {
 
   modal: {
     background: "white",
+    padding: 18,
+    borderRadius: 16,
     width: "90%",
     maxWidth: 360,
-    padding: 18,
-    borderRadius: 18,
   },
 
   modalHeader: {
     display: "flex",
     justifyContent: "space-between",
-    marginBottom: 10,
   },
 
   input: {
@@ -353,9 +336,9 @@ const styles = {
     marginTop: 14,
     padding: 12,
     borderRadius: 12,
-    border: "none",
-    background: "linear-gradient(135deg,#7C3AED,#2563EB)",
+    background: "#7C3AED",
     color: "white",
-    fontWeight: 900,
+    border: "none",
+    fontWeight: 800,
   },
 };
