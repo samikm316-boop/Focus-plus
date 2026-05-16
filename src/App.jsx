@@ -1,17 +1,17 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import Sidebar from "./components/Sidebar";
 
-import { ThemeProvider } from "./context/ThemeContext.jsx";
-
-import RootNavigator from "./navigation/RootNavigator.jsx";
-
-import React, { useEffect, useState } from "react";
 import HomeScreen from "./screens/HomeScreen";
+import StudyScreen from "./screens/StudyScreen";
+import FocusAIScreen from "./screens/FocusAIScreen";
+import SettingsScreen from "./screens/SettingsScreen";
+
 import LoginScreen from "./screens/LoginScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [activeTab, setActiveTab] = useState("home");
 
-  // ✅ AUTO LOGIN RESTORE
   useEffect(() => {
     const token = localStorage.getItem("token");
     const savedUser = localStorage.getItem("user");
@@ -21,45 +21,42 @@ export default function App() {
     }
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  const logout = () => {
+    localStorage.clear();
     setUser(null);
   };
 
-  // ❌ NOT LOGGED IN → LOGIN SCREEN
   if (!user) {
     return <LoginScreen onLogin={setUser} />;
   }
 
-  // ✅ LOGGED IN → APP
-  return (
-    <div>
-      <HomeScreen user={user} />
+  const renderScreen = () => {
+    switch (activeTab) {
+      case "home":
+        return <HomeScreen />;
+      case "study":
+        return <StudyScreen />;
+      case "focus":
+        return <FocusAIScreen />;
+      case "settings":
+        return <SettingsScreen />;
+      default:
+        return <HomeScreen />;
+    }
+  };
 
-      <button
-        onClick={handleLogout}
-        style={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          padding: "8px 12px",
-          background: "red",
-          color: "white",
-          border: "none",
-          borderRadius: "8px",
-        }}
-      >
-        Logout
-      </button>
+  return (
+    <div style={{ display: "flex", height: "100vh" }}>
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        user={user}
+        onLogout={logout}
+      />
+
+      <div style={{ flex: 1, padding: 20, overflow: "auto" }}>
+        {renderScreen()}
+      </div>
     </div>
-  );
-}
-
-export default function App() {
-  return (
-    <ThemeProvider>
-      <RootNavigator />
-    </ThemeProvider>
   );
 }
