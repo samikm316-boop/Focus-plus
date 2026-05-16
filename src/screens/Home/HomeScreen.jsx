@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getCurrentUser, getXP, getNotes, getFlashcards } from "../api";
+import { getCurrentUser, getXP, getNotes, getFlashcards } from "../../api";
 
 export default function HomeScreen() {
   const [user, setUser] = useState(null);
