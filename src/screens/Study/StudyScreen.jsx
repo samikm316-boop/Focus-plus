@@ -29,16 +29,6 @@ export default function StudyScreen({ openSidebar }) {
     });
   }, [notes, selectedSubject, filter]);
 
-  function resetForm() {
-    setForm({ title: "", subject: "Biology", type: "plain" });
-    setEditingId(null);
-  }
-
-  function openCreate() {
-    resetForm();
-    setShowModal(true);
-  }
-
   function saveNote() {
     if (!form.title.trim()) return;
 
@@ -58,7 +48,8 @@ export default function StudyScreen({ openSidebar }) {
     }
 
     setShowModal(false);
-    resetForm();
+    setEditingId(null);
+    setForm({ title: "", subject: "Biology", type: "plain" });
   }
 
   function deleteNote(id) {
@@ -66,11 +57,7 @@ export default function StudyScreen({ openSidebar }) {
   }
 
   function editNote(note) {
-    setForm({
-      title: note.title,
-      subject: note.subject,
-      type: note.type,
-    });
+    setForm(note);
     setEditingId(note.id);
     setShowModal(true);
   }
@@ -97,12 +84,14 @@ export default function StudyScreen({ openSidebar }) {
             onClick={() => setFilter(f)}
             style={{
               ...styles.chip,
-              background: filter === f ? "#7C3AED" : "rgba(255,255,255,0.7)",
+              background:
+                filter === f
+                  ? "linear-gradient(135deg,#7C3AED,#2563EB)"
+                  : "rgba(255,255,255,0.7)",
               color: filter === f ? "white" : "#333",
-              transform: filter === f ? "scale(1.05)" : "scale(1)",
             }}
           >
-            {f}
+            {f.toUpperCase()}
           </button>
         ))}
       </div>
@@ -115,10 +104,11 @@ export default function StudyScreen({ openSidebar }) {
             onClick={() => setSelectedSubject(s)}
             style={{
               ...styles.subjectChip,
-              background: selectedSubject === s
-                ? "linear-gradient(135deg,#7C3AED,#2563EB)"
-                : "rgba(255,255,255,0.8)",
-              color: selectedSubject === s ? "white" : "#333",
+              background:
+                selectedSubject === s
+                  ? "linear-gradient(135deg,#7C3AED,#2563EB)"
+                  : "rgba(255,255,255,0.85)",
+              color: selectedSubject === s ? "white" : "#222",
             }}
           >
             {s}
@@ -135,39 +125,27 @@ export default function StudyScreen({ openSidebar }) {
               <div style={styles.noteTitle}>{note.title}</div>
 
               <div style={styles.actions}>
-                <Pencil
-                  size={16}
-                  onClick={() => editNote(note)}
-                  style={styles.iconAction}
-                />
-                <Trash2
-                  size={16}
-                  onClick={() => deleteNote(note.id)}
-                  style={{ ...styles.iconAction, color: "#ef4444" }}
-                />
+                <Pencil size={16} onClick={() => editNote(note)} />
+                <Trash2 size={16} onClick={() => deleteNote(note.id)} color="#ef4444" />
               </div>
             </div>
 
             <div style={styles.cardBottom}>
-              <span
-                style={{
-                  fontWeight: 700,
-                  color: note.type === "enhanced" ? "#7C3AED" : "#555",
-                }}
-              >
-                {note.type}
+              <span style={{
+                fontWeight: 700,
+                color: note.type === "enhanced" ? "#7C3AED" : "#555"
+              }}>
+                {note.type.toUpperCase()}
               </span>
-              <span>{note.date}</span>
+
+              <span style={{ color: "#666" }}>{note.date}</span>
             </div>
           </div>
         ))}
       </div>
 
       {/* FLOAT BUTTON */}
-      <button
-        onClick={openCreate}
-        style={styles.fab}
-      >
+      <button onClick={() => setShowModal(true)} style={styles.fab}>
         <Plus />
       </button>
 
@@ -181,10 +159,7 @@ export default function StudyScreen({ openSidebar }) {
                 {editingId ? "Edit Note" : "Create Note"}
               </h3>
 
-              <X
-                style={{ cursor: "pointer" }}
-                onClick={() => setShowModal(false)}
-              />
+              <X onClick={() => setShowModal(false)} style={{ cursor: "pointer" }} />
             </div>
 
             <input
@@ -220,7 +195,7 @@ export default function StudyScreen({ openSidebar }) {
             </select>
 
             <button onClick={saveNote} style={styles.saveBtn}>
-              {editingId ? "Update Note" : "Save Note"}
+              SAVE NOTE
             </button>
           </div>
         </div>
@@ -229,7 +204,7 @@ export default function StudyScreen({ openSidebar }) {
   );
 }
 
-/* ================= UI SYSTEM ================= */
+/* ================= DESIGN SYSTEM ================= */
 
 const styles = {
   page: {
@@ -257,6 +232,7 @@ const styles = {
   title: {
     fontSize: 22,
     fontWeight: 900,
+    letterSpacing: 1,
     background: "linear-gradient(90deg,#7C3AED,#2563EB)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
@@ -273,7 +249,6 @@ const styles = {
     borderRadius: 999,
     border: "none",
     fontWeight: 700,
-    transition: "0.2s",
     cursor: "pointer",
   },
 
@@ -290,22 +265,20 @@ const styles = {
     fontWeight: 700,
     cursor: "pointer",
     whiteSpace: "nowrap",
-    transition: "0.2s",
   },
 
   notesList: {
     marginTop: 16,
     display: "flex",
     flexDirection: "column",
-    gap: 10,
+    gap: 12,
   },
 
   card: {
     background: "white",
     padding: 14,
-    borderRadius: 16,
-    boxShadow: "0 10px 25px rgba(0,0,0,0.06)",
-    transition: "0.2s",
+    borderRadius: 18,
+    boxShadow: "0 12px 30px rgba(0,0,0,0.06)",
   },
 
   cardTop: {
@@ -314,24 +287,21 @@ const styles = {
   },
 
   noteTitle: {
-    fontWeight: 800,
+    fontWeight: 900,
+    fontSize: 15,
   },
 
   actions: {
     display: "flex",
     gap: 10,
-  },
-
-  iconAction: {
     cursor: "pointer",
   },
 
   cardBottom: {
     display: "flex",
     justifyContent: "space-between",
-    marginTop: 6,
+    marginTop: 8,
     fontSize: 12,
-    color: "#666",
   },
 
   fab: {
@@ -344,14 +314,13 @@ const styles = {
     border: "none",
     background: "linear-gradient(135deg,#7C3AED,#2563EB)",
     color: "white",
-    fontSize: 22,
-    boxShadow: "0 15px 30px rgba(124,58,237,0.3)",
+    boxShadow: "0 18px 40px rgba(124,58,237,0.35)",
   },
 
   modalOverlay: {
     position: "fixed",
     inset: 0,
-    background: "rgba(0,0,0,0.4)",
+    background: "rgba(0,0,0,0.45)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -362,7 +331,7 @@ const styles = {
     width: "90%",
     maxWidth: 360,
     padding: 18,
-    borderRadius: 16,
+    borderRadius: 18,
   },
 
   modalHeader: {
@@ -383,11 +352,10 @@ const styles = {
     width: "100%",
     marginTop: 14,
     padding: 12,
+    borderRadius: 12,
+    border: "none",
     background: "linear-gradient(135deg,#7C3AED,#2563EB)",
     color: "white",
-    border: "none",
-    borderRadius: 12,
-    fontWeight: 800,
-    cursor: "pointer",
+    fontWeight: 900,
   },
 };
