@@ -1,11 +1,10 @@
 import React from "react";
-import { X } from "lucide-react";
 
 export default function Sidebar({
   activeTab,
   setActiveTab,
   sidebarOpen,
-  closeSidebar,
+  setSidebarOpen,
 }) {
   const menu = [
     { id: "home", label: "Home", icon: "🏠" },
@@ -15,81 +14,86 @@ export default function Sidebar({
   ];
 
   return (
-    <>
-      {/* OVERLAY */}
-      {sidebarOpen && (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: sidebarOpen ? 0 : "-280px",
+        width: 260,
+        height: "100vh",
+        background: "#0B0F1A",
+        color: "white",
+        padding: 20,
+        transition: "0.3s",
+        zIndex: 100,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
+    >
+      {/* TOP */}
+      <div>
         <div
-          onClick={closeSidebar}
           style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            zIndex: 20,
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: 30,
           }}
-        />
-      )}
-
-      {/* SIDEBAR */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: 280,
-          height: "100vh",
-          background: "#0B0F1A",
-          color: "white",
-          padding: 20,
-          transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
-          transition: "0.3s ease",
-          zIndex: 30,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* HEADER */}
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        >
           <h2 style={{ margin: 0 }}>FOCUS+</h2>
 
           <button
-            onClick={closeSidebar}
+            onClick={() => setSidebarOpen(false)}
             style={{
               background: "transparent",
               border: "none",
               color: "white",
-              fontSize: 22,
+              fontSize: 24,
               cursor: "pointer",
             }}
           >
-            <X />
+            ×
           </button>
         </div>
 
         {/* MENU */}
-        <div style={{ marginTop: 30, display: "flex", flexDirection: "column", gap: 10 }}>
-          {menu.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              style={{
-                padding: "14px",
-                borderRadius: "12px",
-                border: "none",
-                textAlign: "left",
-                background:
-                  activeTab === item.id
-                    ? "linear-gradient(90deg,#7c3aed,#d946ef)"
-                    : "transparent",
-                color: "white",
-                cursor: "pointer",
-                fontSize: 16,
-              }}
-            >
-              {item.icon} {item.label}
-            </button>
-          ))}
-        </div>
+        {menu.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => {
+              setActiveTab(item.id);
+              setSidebarOpen(false);
+            }}
+            style={{
+              width: "100%",
+              padding: 14,
+              marginBottom: 10,
+              borderRadius: 12,
+              border: "none",
+              textAlign: "left",
+              cursor: "pointer",
+              background:
+                activeTab === item.id
+                  ? "linear-gradient(90deg,#7c3aed,#d946ef)"
+                  : "transparent",
+              color: "white",
+            }}
+          >
+            {item.icon} {item.label}
+          </button>
+        ))}
       </div>
-    </>
+
+      {/* USER */}
+      <div
+        style={{
+          padding: 14,
+          borderRadius: 16,
+          background: "rgba(255,255,255,0.06)",
+        }}
+      >
+        USER
+      </div>
+    </div>
   );
 }
