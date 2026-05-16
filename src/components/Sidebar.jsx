@@ -51,7 +51,9 @@ export default function Sidebar({
         style={{
           position: "fixed",
           top: 0,
-          left: sidebarOpen ? 0 : "-280px",
+          transform: sidebarOpen
+  ? "translateX(0)"
+  : "translateX(-110%)",
           width: "260px",
           height: "100vh",
           background:
