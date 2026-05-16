@@ -5,7 +5,7 @@ import HomeScreen from "./screens/Home/HomeScreen";
 import StudyScreen from "./screens/StudyScreen";
 import FocusAIScreen from "./screens/FocusAIScreen";
 import SettingsScreen from "./screens/SettingsScreen";
-
+import AuthScreen from "./screens/AuthScreen";
 import LoginScreen from "./screens/LoginScreen";
 
 export default function App() {
