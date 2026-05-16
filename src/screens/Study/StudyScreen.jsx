@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Menu, Plus, SlidersHorizontal } from "lucide-react";
 
 export default function StudyScreen({ openSidebar }) {
-  const [activeTab, setActiveTab] = useState("notes");
+  const activeTab = studyTab;
+const setActiveTab = setStudyTab;
 
   return (
     <div
