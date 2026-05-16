@@ -1,65 +1,24 @@
 const API_BASE = "https://focus-plus.onrender.com";
 
-export async function login(email, password) {
-  const res = await fetch(`${API_BASE}/auth/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email, password }),
-  });
-
-  return res.json();
-}
-
-export async function register(email, password, username) {
-  const res = await fetch(`${API_BASE}/auth/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email, password, username }),
-  });
-
-  return res.json();
-}
-
-const API =
-  "https://focus-plus.onrender.com";
-
 /* =========================
    TOKEN
 ========================= */
-
 export function getToken() {
   return localStorage.getItem("token");
 }
 
 /* =========================
-   USER
+   AUTH
 ========================= */
 
 export async function getCurrentUser() {
-  try {
-    const response = await fetch(
-      `${API}/api/users/me`,
-      {
-        headers: {
-          Authorization:
-            `Bearer ${getToken()}`,
-        },
-      }
-    );
+  const res = await fetch(`${API_BASE}/api/users/me`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
 
-    return await response.json();
-  } catch (error) {
-    console.error(
-      "USER ERROR:",
-      error
-    );
-
-    return null;
-  }
+  return res.json();
 }
 
 /* =========================
@@ -67,26 +26,13 @@ export async function getCurrentUser() {
 ========================= */
 
 export async function getXP() {
-  try {
-    const response = await fetch(
-      `${API}/api/xp`,
-      {
-        headers: {
-          Authorization:
-            `Bearer ${getToken()}`,
-        },
-      }
-    );
+  const res = await fetch(`${API_BASE}/api/xp`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
 
-    return await response.json();
-  } catch (error) {
-    console.error(
-      "XP ERROR:",
-      error
-    );
-
-    return null;
-  }
+  return res.json();
 }
 
 /* =========================
@@ -94,62 +40,13 @@ export async function getXP() {
 ========================= */
 
 export async function getNotes() {
-  try {
-    const response = await fetch(
-      `${API}/api/study/notes`,
-      {
-        headers: {
-          Authorization:
-            `Bearer ${getToken()}`,
-        },
-      }
-    );
+  const res = await fetch(`${API_BASE}/api/study/notes`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
 
-    return await response.json();
-  } catch (error) {
-    console.error(
-      "NOTES ERROR:",
-      error
-    );
-
-    return [];
-  }
-}
-
-export async function createNote(
-  title,
-  content
-) {
-  try {
-    const response = await fetch(
-      `${API}/api/study/notes`,
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type":
-            "application/json",
-
-          Authorization:
-            `Bearer ${getToken()}`,
-        },
-
-        body: JSON.stringify({
-          title,
-          content,
-        }),
-      }
-    );
-
-    return await response.json();
-  } catch (error) {
-    console.error(
-      "CREATE NOTE ERROR:",
-      error
-    );
-
-    return null;
-  }
+  return res.json();
 }
 
 /* =========================
@@ -157,100 +54,11 @@ export async function createNote(
 ========================= */
 
 export async function getFlashcards() {
-  try {
-    const response = await fetch(
-      `${API}/api/study/flashcards`,
-      {
-        headers: {
-          Authorization:
-            `Bearer ${getToken()}`,
-        },
-      }
-    );
+  const res = await fetch(`${API_BASE}/api/study/flashcards`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
 
-    return await response.json();
-  } catch (error) {
-    console.error(
-      "FLASHCARD ERROR:",
-      error
-    );
-
-    return [];
-  }
-}
-
-export async function createFlashcard(
-  question,
-  answer
-) {
-  try {
-    const response = await fetch(
-      `${API}/api/study/flashcards`,
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type":
-            "application/json",
-
-          Authorization:
-            `Bearer ${getToken()}`,
-        },
-
-        body: JSON.stringify({
-          question,
-          answer,
-        }),
-      }
-    );
-
-    return await response.json();
-  } catch (error) {
-    console.error(
-      "CREATE FLASHCARD ERROR:",
-      error
-    );
-
-    return null;
-  }
-}
-
-/* =========================
-   CHAT AI
-========================= */
-
-export async function sendAIMessage(
-  message,
-  type = "study"
-) {
-  try {
-    const response = await fetch(
-      `${API}/api/chat`,
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type":
-            "application/json",
-
-          Authorization:
-            `Bearer ${getToken()}`,
-        },
-
-        body: JSON.stringify({
-          message,
-          type,
-        }),
-      }
-    );
-
-    return await response.json();
-  } catch (error) {
-    console.error(
-      "CHAT ERROR:",
-      error
-    );
-
-    return null;
-  }
+  return res.json();
 }
