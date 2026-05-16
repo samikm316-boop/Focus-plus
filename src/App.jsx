@@ -9,17 +9,18 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] =
     useState(false);
 
-  const [screen, setScreen] =
+  const [activeScreen, setActiveScreen] =
     useState("home");
 
   const renderScreen = () => {
-    switch (screen) {
+    switch (activeScreen) {
       case "home":
         return (
           <HomeScreen
             openSidebar={() =>
               setSidebarOpen(true)
             }
+            navigate={setActiveScreen}
           />
         );
 
@@ -29,6 +30,7 @@ export default function App() {
             openSidebar={() =>
               setSidebarOpen(true)
             }
+            navigate={setActiveScreen}
           />
         );
 
@@ -38,6 +40,7 @@ export default function App() {
             openSidebar={() =>
               setSidebarOpen(true)
             }
+            navigate={setActiveScreen}
           />
         );
 
@@ -47,6 +50,7 @@ export default function App() {
             openSidebar={() =>
               setSidebarOpen(true)
             }
+            navigate={setActiveScreen}
           />
         );
 
@@ -56,6 +60,7 @@ export default function App() {
             openSidebar={() =>
               setSidebarOpen(true)
             }
+            navigate={setActiveScreen}
           />
         );
     }
@@ -71,7 +76,7 @@ export default function App() {
         position: "relative",
       }}
     >
-      {/* SIDEBAR OVERLAY */}
+      {/* OVERLAY */}
 
       {sidebarOpen && (
         <div
@@ -112,7 +117,7 @@ export default function App() {
         }}
       >
         <div>
-          {/* TOP */}
+          {/* HEADER */}
 
           <div
             style={{
@@ -156,147 +161,61 @@ export default function App() {
             </button>
           </div>
 
-          {/* MENU */}
+          {/* BUTTONS */}
 
           <SidebarButton
-            icon="🏠"
             text="Home"
-            active={screen === "home"}
+            icon="🏠"
+            active={
+              activeScreen === "home"
+            }
             onClick={() => {
-              setScreen("home");
+              setActiveScreen("home");
               setSidebarOpen(false);
             }}
           />
 
           <SidebarButton
-            icon="📚"
             text="Study"
-            badge="5"
-            active={screen === "study"}
+            icon="📚"
+            active={
+              activeScreen === "study"
+            }
             onClick={() => {
-              setScreen("study");
+              setActiveScreen("study");
               setSidebarOpen(false);
             }}
           />
 
           <SidebarButton
-            icon="🤖"
             text="Focus AI"
+            icon="🤖"
             active={
-              screen === "focus-ai"
+              activeScreen ===
+              "focus-ai"
             }
             onClick={() => {
-              setScreen("focus-ai");
+              setActiveScreen(
+                "focus-ai"
+              );
               setSidebarOpen(false);
             }}
           />
 
           <SidebarButton
-            icon="👤"
-            text="Profile"
-            active={
-              screen === "profile"
-            }
-            onClick={() => {
-              setSidebarOpen(false);
-            }}
-          />
-
-          <SidebarButton
-            icon="⚙️"
             text="Settings"
+            icon="⚙️"
             active={
-              screen === "settings"
+              activeScreen ===
+              "settings"
             }
             onClick={() => {
-              setScreen("settings");
+              setActiveScreen(
+                "settings"
+              );
               setSidebarOpen(false);
             }}
           />
-        </div>
-
-        {/* USER CARD */}
-
-        <div
-          style={{
-            background:
-              "rgba(255,255,255,0.06)",
-            borderRadius: "24px",
-            padding: "16px",
-            border:
-              "1px solid rgba(255,255,255,0.08)",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "14px",
-            }}
-          >
-            <img
-              src="https://api.dicebear.com/7.x/adventurer/svg?seed=Focus"
-              alt="avatar"
-              style={{
-                width: "60px",
-                height: "60px",
-                borderRadius: "18px",
-                background:
-                  "linear-gradient(135deg,#c4b5fd,#f9a8d4)",
-              }}
-            />
-
-            <div>
-              <div
-                style={{
-                  color: "white",
-                  fontWeight: "700",
-                  fontSize: "18px",
-                }}
-              >
-                USER
-              </div>
-
-              <div
-                style={{
-                  marginTop: "4px",
-                  display: "inline-block",
-                  padding:
-                    "4px 10px",
-                  borderRadius:
-                    "999px",
-                  background:
-                    "linear-gradient(90deg,#d946ef,#6366f1)",
-                  color: "white",
-                  fontSize: "12px",
-                  fontWeight: "700",
-                }}
-              >
-                Level 3
-              </div>
-            </div>
-          </div>
-
-          <div
-            style={{
-              marginTop: "16px",
-              width: "100%",
-              height: "8px",
-              background:
-                "rgba(255,255,255,0.08)",
-              borderRadius: "999px",
-              overflow: "hidden",
-            }}
-          >
-            <div
-              style={{
-                width: "60%",
-                height: "100%",
-                background:
-                  "linear-gradient(90deg,#d946ef,#60a5fa)",
-              }}
-            />
-          </div>
         </div>
       </div>
 
@@ -311,7 +230,6 @@ function SidebarButton({
   icon,
   text,
   active,
-  badge,
   onClick,
 }) {
   return (
@@ -327,8 +245,7 @@ function SidebarButton({
         color: "white",
         display: "flex",
         alignItems: "center",
-        justifyContent:
-          "space-between",
+        gap: "14px",
         padding: "18px",
         borderRadius: "18px",
         marginBottom: "14px",
@@ -336,34 +253,8 @@ function SidebarButton({
         fontWeight: "600",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          gap: "14px",
-          alignItems: "center",
-        }}
-      >
-        <span>{icon}</span>
-        <span>{text}</span>
-      </div>
-
-      {badge && (
-        <div
-          style={{
-            minWidth: "26px",
-            height: "26px",
-            borderRadius: "50%",
-            background: "#ff4da6",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "13px",
-            fontWeight: "700",
-          }}
-        >
-          {badge}
-        </div>
-      )}
+      <span>{icon}</span>
+      <span>{text}</span>
     </button>
   );
 }
