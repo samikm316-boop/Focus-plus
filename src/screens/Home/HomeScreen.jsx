@@ -60,84 +60,76 @@ export default function HomeScreen({
     >
       {/* TOP BAR */}
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: "20px",
-        }}
-      >
-        <button
-  onClick={openSidebar}
+<div
   style={{
-    border: "none",
-    background: "transparent",
-    fontSize: "34px",
-    cursor: "pointer",
-    width: "52px",
-    height: "52px",
-    borderRadius: "16px",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    marginBottom: "20px",
   }}
 >
-  ☰
-</button>
-            border: "none",
-            background: "transparent",
-            fontSize: "30px",
-            cursor: "pointer",
-          }}
-        >
-          ☰
-        </button>
+  <button
+    onClick={openSidebar}
+    style={{
+      border: "none",
+      background: "transparent",
+      fontSize: "34px",
+      cursor: "pointer",
+      width: "52px",
+      height: "52px",
+      borderRadius: "16px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}
+  >
+    ☰
+  </button>
 
-        <h1
-          style={{
-            fontSize: "30px",
-            fontWeight: "800",
-            background:
-              "linear-gradient(90deg,#ff5ec4,#6c63ff)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            margin: 0,
-          }}
-        >
-          FOCUS+
-        </h1>
+  <h1
+    style={{
+      fontSize: "30px",
+      fontWeight: "800",
+      background:
+        "linear-gradient(90deg,#ff5ec4,#6c63ff)",
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent",
+      margin: 0,
+    }}
+  >
+    FOCUS+
+  </h1>
 
-        <div
-          style={{
-            background: "#EFE7FF",
-            borderRadius: "16px",
-            padding: "10px 14px",
-            textAlign: "center",
-            minWidth: "52px",
-          }}
-        >
-          <div
-            style={{
-              fontSize: "11px",
-              color: "#666",
-              fontWeight: "600",
-            }}
-          >
-            DATE
-          </div>
+  <div
+    style={{
+      background: "#EFE7FF",
+      borderRadius: "16px",
+      padding: "10px 14px",
+      textAlign: "center",
+      minWidth: "52px",
+    }}
+  >
+    <div
+      style={{
+        fontSize: "11px",
+        color: "#666",
+        fontWeight: "600",
+      }}
+    >
+      DATE
+    </div>
 
-          <div
-            style={{
-              fontWeight: "800",
-              fontSize: "20px",
-              color: "#111",
-            }}
-          >
-            {new Date().getDate()}
-          </div>
-        </div>
-      </div>
+    <div
+      style={{
+        fontWeight: "800",
+        fontSize: "20px",
+        color: "#111",
+      }}
+    >
+      {new Date().getDate()}
+    </div>
+  </div>
+</div>
 
       {/* PROFILE CARD */}
 
