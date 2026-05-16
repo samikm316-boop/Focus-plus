@@ -11,24 +11,31 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const screenProps = {
+    openSidebar: () => setSidebarOpen(true),
+  };
+
   const renderScreen = () => {
     switch (activeTab) {
       case "home":
-        return <HomeScreen openSidebar={() => setSidebarOpen(true)} />;
+        return <HomeScreen {...screenProps} />;
+
       case "study":
-        return <StudyScreen openSidebar={() => setSidebarOpen(true)} />;
+        return <StudyScreen {...screenProps} />;
+
       case "focus":
-        return <ChatScreen openSidebar={() => setSidebarOpen(true)} />;
+        return <ChatScreen {...screenProps} />;
+
       case "settings":
-        return <SettingsScreen openSidebar={() => setSidebarOpen(true)} />;
+        return <SettingsScreen {...screenProps} />;
+
       default:
-        return <HomeScreen openSidebar={() => setSidebarOpen(true)} />;
+        return <HomeScreen {...screenProps} />;
     }
   };
 
   return (
-    <div style={{ display: "flex" }}>
-      {/* SIDEBAR */}
+    <>
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -36,21 +43,16 @@ export default function App() {
         setSidebarOpen={setSidebarOpen}
       />
 
-      {/* OVERLAY */}
-      {sidebarOpen && (
-        <div
-          onClick={() => setSidebarOpen(false)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.4)",
-            zIndex: 90,
-          }}
-        />
-      )}
-
-      {/* MAIN */}
-      <div style={{ flex: 1 }}>{renderScreen()}</div>
-    </div>
+      <div
+        style={{
+          width: "100%",
+          minHeight: "100vh",
+          overflowX: "hidden",
+          background: "#F6F7FB",
+        }}
+      >
+        {renderScreen()}
+      </div>
+    </>
   );
 }
