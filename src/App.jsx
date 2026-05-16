@@ -12,6 +12,9 @@ export default function App() {
   const [activeScreen, setActiveScreen] =
     useState("home");
 
+  // Added studyTab state here
+  const [studyTab, setStudyTab] = useState("notes");
+
   const renderScreen = () => {
     switch (activeScreen) {
       case "home":
@@ -31,6 +34,8 @@ export default function App() {
               setSidebarOpen(true)
             }
             navigate={setActiveScreen}
+            studyTab={studyTab}
+            setStudyTab={setStudyTab}
           />
         );
 
