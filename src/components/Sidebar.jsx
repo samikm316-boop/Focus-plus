@@ -14,7 +14,10 @@ export default function Sidebar({
     { id: "focus", label: "Focus AI", icon: "🧠" },
     { id: "settings", label: "Settings", icon: "⚙️" },
   ];
-
+onClick={() => {
+  setActiveTab(item.id);
+  setSidebarOpen(false);
+}}
   return (
     <>
       {/* HAMBURGER */}
