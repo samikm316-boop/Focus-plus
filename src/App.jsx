@@ -10,45 +10,45 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const openSidebar = () => setSidebarOpen(true);
+  const closeSidebar = () => setSidebarOpen(false);
+
   const renderScreen = () => {
+    const props = {
+      openSidebar,
+      closeSidebar,
+      setActiveTab,
+    };
+
     switch (activeTab) {
       case "home":
-        return (
-          <HomeScreen openSidebar={() => setSidebarOpen(true)} />
-        );
-
+        return <HomeScreen {...props} />;
       case "study":
-        return (
-          <StudyScreen openSidebar={() => setSidebarOpen(true)} />
-        );
-
+        return <StudyScreen {...props} />;
       case "focus":
-        return (
-          <ChatScreen openSidebar={() => setSidebarOpen(true)} />
-        );
-
+        return <ChatScreen {...props} />;
       case "settings":
-        return (
-          <SettingsScreen openSidebar={() => setSidebarOpen(true)} />
-        );
-
+        return <SettingsScreen {...props} />;
       default:
-        return (
-          <HomeScreen openSidebar={() => setSidebarOpen(true)} />
-        );
+        return <HomeScreen {...props} />;
     }
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          setSidebarOpen(false);
+        }}
         sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
+        closeSidebar={closeSidebar}
       />
 
-      <div style={{ flex: 1 }}>{renderScreen()}</div>
+      <div style={{ flex: 1, overflow: "auto" }}>
+        {renderScreen()}
+      </div>
     </div>
   );
 }
