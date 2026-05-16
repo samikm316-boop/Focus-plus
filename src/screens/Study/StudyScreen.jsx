@@ -1,9 +1,115 @@
-import React, { useState } from "react";
+import React from "react";
 import { Menu, Plus, SlidersHorizontal } from "lucide-react";
 
-export default function StudyScreen({ openSidebar }) {
+export default function StudyScreen({
+  openSidebar,
+  studyTab,
+  setStudyTab,
+}) {
   const activeTab = studyTab;
-const setActiveTab = setStudyTab;
+  const setActiveTab = setStudyTab;
+
+  // Render content conditionally based on activeTab
+  function renderStudyContent() {
+    switch (activeTab) {
+      case "create":
+        return <div>Create Screen</div>;
+
+      case "notes":
+        return (
+          <>
+            {/* SUBJECTS */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "14px",
+              }}
+            >
+              <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800" }}>
+                SUBJECTS
+              </h2>
+
+              <span style={{ color: "#7C3AED", fontWeight: "700", fontSize: "13px" }}>
+                View all
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                overflowX: "auto",
+                paddingBottom: "8px",
+              }}
+            >
+              <SubjectCard color="#DCFCE7" icon="🌿" name="Biology" count="12 notes" />
+              <SubjectCard color="#DBEAFE" icon="∑" name="Maths" count="15 notes" />
+              <SubjectCard color="#FFEDD5" icon="🏛️" name="History" count="8 notes" />
+              <SubjectCard color="#EDE9FE" icon="🧪" name="Chemistry" count="7 notes" />
+            </div>
+
+            {/* NOTES HEADER */}
+            <div
+              style={{
+                marginTop: "24px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800" }}>
+                NOTES
+              </h2>
+
+              <SlidersHorizontal size={18} color="#6B7280" />
+            </div>
+
+            {/* FILTER CHIPS */}
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                marginTop: "12px",
+                marginBottom: "18px",
+              }}
+            >
+              <Chip label="All" active />
+              <Chip label="Plain" />
+              <Chip label="Enhanced" />
+            </div>
+
+            {/* NOTES LIST */}
+            <NoteGroup color="#22C55E" subject="Biology" count="12 notes">
+              <Note title="Cell Structure and Function" type="Plain Note" date="20 May" />
+              <Note title="Photosynthesis Process" type="Enhanced" date="18 May" highlight />
+            </NoteGroup>
+
+            <NoteGroup color="#3B82F6" subject="Maths" count="15 notes">
+              <Note title="Quadratic Equations" type="Plain Note" date="19 May" />
+              <Note title="Algebraic Identities" type="Enhanced" date="17 May" highlight />
+            </NoteGroup>
+
+            <NoteGroup color="#F97316" subject="History" count="8 notes">
+              <Note title="World War 2 Overview" type="Plain Note" date="16 May" />
+            </NoteGroup>
+          </>
+        );
+
+      case "flashcards":
+        return <div>Flashcards Screen</div>;
+
+      case "quiz":
+        return <div>Quiz Screen</div>;
+
+      case "learn":
+        return <div>Learn Screen</div>;
+
+      default:
+        return <div>Notes Screen</div>;
+    }
+  }
 
   return (
     <div
@@ -68,94 +174,40 @@ const setActiveTab = setStudyTab;
           marginBottom: "22px",
         }}
       >
-        <Tab icon="➕" label="Create" />
+        <Tab
+          icon="➕"
+          label="Create"
+          active={activeTab === "create"}
+          onClick={() => setActiveTab("create")}
+        />
         <Tab
           icon="📘"
           label="Notes"
           active={activeTab === "notes"}
           onClick={() => setActiveTab("notes")}
         />
-        <Tab icon="📖" label="Flashcards" />
-        <Tab icon="🧪" label="Quiz" />
-        <Tab icon="🎓" label="Learn" />
+        <Tab
+          icon="📖"
+          label="Flashcards"
+          active={activeTab === "flashcards"}
+          onClick={() => setActiveTab("flashcards")}
+        />
+        <Tab
+          icon="🧪"
+          label="Quiz"
+          active={activeTab === "quiz"}
+          onClick={() => setActiveTab("quiz")}
+        />
+        <Tab
+          icon="🎓"
+          label="Learn"
+          active={activeTab === "learn"}
+          onClick={() => setActiveTab("learn")}
+        />
       </div>
 
-      {/* SUBJECTS */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "14px",
-        }}
-      >
-        <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800" }}>
-          SUBJECTS
-        </h2>
-
-        <span style={{ color: "#7C3AED", fontWeight: "700", fontSize: "13px" }}>
-          View all
-        </span>
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          gap: "12px",
-          overflowX: "auto",
-          paddingBottom: "8px",
-        }}
-      >
-        <SubjectCard color="#DCFCE7" icon="🌿" name="Biology" count="12 notes" />
-        <SubjectCard color="#DBEAFE" icon="∑" name="Maths" count="15 notes" />
-        <SubjectCard color="#FFEDD5" icon="🏛️" name="History" count="8 notes" />
-        <SubjectCard color="#EDE9FE" icon="🧪" name="Chemistry" count="7 notes" />
-      </div>
-
-      {/* NOTES HEADER */}
-      <div
-        style={{
-          marginTop: "24px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800" }}>
-          NOTES
-        </h2>
-
-        <SlidersHorizontal size={18} color="#6B7280" />
-      </div>
-
-      {/* FILTER CHIPS */}
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          marginTop: "12px",
-          marginBottom: "18px",
-        }}
-      >
-        <Chip label="All" active />
-        <Chip label="Plain" />
-        <Chip label="Enhanced" />
-      </div>
-
-      {/* NOTES LIST */}
-      <NoteGroup color="#22C55E" subject="Biology" count="12 notes">
-        <Note title="Cell Structure and Function" type="Plain Note" date="20 May" />
-        <Note title="Photosynthesis Process" type="Enhanced" date="18 May" highlight />
-      </NoteGroup>
-
-      <NoteGroup color="#3B82F6" subject="Maths" count="15 notes">
-        <Note title="Quadratic Equations" type="Plain Note" date="19 May" />
-        <Note title="Algebraic Identities" type="Enhanced" date="17 May" highlight />
-      </NoteGroup>
-
-      <NoteGroup color="#F97316" subject="History" count="8 notes">
-        <Note title="World War 2 Overview" type="Plain Note" date="16 May" />
-      </NoteGroup>
+      {/* DYNAMIC CONTENT SWITCHER */}
+      {renderStudyContent()}
 
       {/* FLOATING BUTTON */}
       <button
@@ -179,7 +231,7 @@ const setActiveTab = setStudyTab;
   );
 }
 
-/* ===== COMPONENTS ===== */
+/* ===== SUB-COMPONENTS ===== */
 
 function Tab({ icon, label, active, onClick }) {
   return (
@@ -306,9 +358,4 @@ function Note({ title, type, date, highlight }) {
       </div>
     </div>
   );
-
-  export default function StudyScreen({
-  openSidebar,
-  studyTab,
-  setStudyTab,
-}) 
+}
