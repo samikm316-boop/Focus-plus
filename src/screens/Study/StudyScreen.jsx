@@ -72,12 +72,37 @@ export default function StudyScreen({ openSidebar }) {
     },
   ]);
 
+  // Patch 1: Updated subjects structure with icons and colors
   const subjects = [
-    "All",
-    "Biology",
-    "Maths",
-    "History",
-    "Chemistry",
+    {
+      name: "All",
+      icon: "📚",
+      color: "#E5E7EB",
+    },
+
+    {
+      name: "Biology",
+      icon: "🌿",
+      color: "#DCFCE7",
+    },
+
+    {
+      name: "Maths",
+      icon: "∑",
+      color: "#DBEAFE",
+    },
+
+    {
+      name: "History",
+      icon: "🏛️",
+      color: "#FFEDD5",
+    },
+
+    {
+      name: "Chemistry",
+      icon: "🧪",
+      color: "#EDE9FE",
+    },
   ];
 
   const filteredNotes = useMemo(() => {
@@ -164,12 +189,14 @@ export default function StudyScreen({ openSidebar }) {
     );
   }
 
+  // Patch 2: Updated groupedNotes logic to map names and pass along the subject icon
   const groupedNotes = subjects
-    .filter((s) => s !== "All")
-    .map((subject) => ({
-      subject,
+    .filter((s) => s.name !== "All")
+    .map((subjectObj) => ({
+      subject: subjectObj.name,
+      icon: subjectObj.icon,
       notes: filteredNotes.filter(
-        (n) => n.subject === subject
+        (n) => n.subject === subjectObj.name
       ),
     }))
     .filter((group) => group.notes.length);
@@ -209,15 +236,22 @@ export default function StudyScreen({ openSidebar }) {
       </div>
 
       {/* TABS */}
+      {/* Patch 5: Made all top tabs functional with explicit handlers */}
       <div style={tabsContainer}>
-        <Tab icon="➕" label="Create" />
+        <Tab
+          icon="➕"
+          label="Create"
+          active={activeTab === "create"}
+          onClick={() => {
+            setActiveTab("create");
+            openCreateModal();
+          }}
+        />
 
         <Tab
           icon="📘"
           label="Notes"
-          active={
-            activeTab === "notes"
-          }
+          active={activeTab === "notes"}
           onClick={() =>
             setActiveTab("notes")
           }
@@ -226,16 +260,28 @@ export default function StudyScreen({ openSidebar }) {
         <Tab
           icon="📖"
           label="Flashcards"
+          active={activeTab === "flashcards"}
+          onClick={() =>
+            setActiveTab("flashcards")
+          }
         />
 
         <Tab
           icon="🧪"
           label="Quiz"
+          active={activeTab === "quiz"}
+          onClick={() =>
+            setActiveTab("quiz")
+          }
         />
 
         <Tab
           icon="🎓"
           label="Learn"
+          active={activeTab === "learn"}
+          onClick={() =>
+            setActiveTab("learn")
+          }
         />
       </div>
 
@@ -245,32 +291,40 @@ export default function StudyScreen({ openSidebar }) {
           SUBJECTS
         </h2>
 
-        <span style={viewAll}>
+        {/* Patch 4: Made "View all" interactive and responsive */}
+        <span
+          style={{
+            ...viewAll,
+            cursor: "pointer",
+          }}
+          onClick={() =>
+            setSelectedSubject("All")
+          }
+        >
           View all
         </span>
       </div>
 
       <div style={subjectsRow}>
+        {/* Patch 3: Render and map redesigned multi-prop SubjectCards */}
         {subjects
-          .filter((s) => s !== "All")
+          .filter((s) => s.name !== "All")
           .map((subject) => (
             <SubjectCard
-              key={subject}
-              name={subject}
+              key={subject.name}
+              name={subject.name}
+              icon={subject.icon}
+              color={subject.color}
               active={
-                selectedSubject ===
-                subject
+                selectedSubject === subject.name
               }
               onClick={() =>
-                setSelectedSubject(
-                  subject
-                )
+                setSelectedSubject(subject.name)
               }
               count={`${
                 notes.filter(
                   (n) =>
-                    n.subject ===
-                    subject
+                    n.subject === subject.name
                 ).length
               } notes`}
             />
@@ -309,9 +363,11 @@ export default function StudyScreen({ openSidebar }) {
 
       {/* NOTES */}
       {groupedNotes.map((group) => (
+        {/* Patch 8: Correctly feeding the grouped emoji icon straight into NoteGroup */}
         <NoteGroup
           key={group.subject}
           subject={group.subject}
+          icon={group.icon}
           count={`${group.notes.length} notes`}
         >
           {group.notes.map((note) => (
@@ -492,28 +548,43 @@ function Tab({
   );
 }
 
+{/* Patch 6: Fully replaced SubjectCard component utilizing icons, custom colors, and scaling states */}
 function SubjectCard({
   name,
   count,
   active,
   onClick,
+  icon,
+  color,
 }) {
   return (
     <div
       onClick={onClick}
       style={{
-        minWidth: "120px",
+        minWidth: "130px",
         background: active
           ? "#DDD6FE"
-          : "white",
+          : color,
         padding: "14px",
-        borderRadius: "18px",
+        borderRadius: "20px",
         cursor: "pointer",
         transition: "0.25s",
         boxShadow:
           "0 10px 25px rgba(0,0,0,0.05)",
+        transform: active
+          ? "scale(1.03)"
+          : "scale(1)",
       }}
     >
+      <div
+        style={{
+          fontSize: "24px",
+          marginBottom: "10px",
+        }}
+      >
+        {icon}
+      </div>
+
       <div
         style={{
           fontWeight: "800",
@@ -526,6 +597,7 @@ function SubjectCard({
         style={{
           fontSize: "12px",
           color: "#555",
+          marginTop: "4px",
         }}
       >
         {count}
@@ -561,10 +633,12 @@ function Chip({
   );
 }
 
+{/* Patch 7: Replaced NoteGroup component header to include icons alongside text titles */}
 function NoteGroup({
   subject,
   count,
   children,
+  icon,
 }) {
   return (
     <div
@@ -578,7 +652,7 @@ function NoteGroup({
           fontWeight: "800",
         }}
       >
-        {subject}
+        {icon} {subject}
         <span
           style={{
             color: "#9CA3AF",
@@ -813,3 +887,4 @@ const saveBtn = {
   color: "white",
   fontWeight: "800",
 };
+          
