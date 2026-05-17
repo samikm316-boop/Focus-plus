@@ -361,28 +361,56 @@ export default function StudyScreen({ openSidebar }) {
         ))}
       </div>
 
-      {/* NOTES */}
-      {groupedNotes.map((group) => (
-        <NoteGroup
-          key={group.subject}
-          subject={group.subject}
-          icon={group.icon}
-          count={`${group.notes.length} notes`}
-        >
-          {group.notes.map((note) => (
-            <Note
-              key={note.id}
-              note={note}
-              onEdit={() =>
-                editNote(note)
-              }
-              onDelete={() =>
-                deleteNote(note.id)
-              }
-            />
+      {/* SCREEN CONTENT */}
+      {activeTab === "notes" && (
+        <>
+          {groupedNotes.map((group) => (
+            <NoteGroup
+              key={group.subject}
+              subject={group.subject}
+              icon={group.icon}
+              count={`${group.notes.length} notes`}
+            >
+              {group.notes.map((note) => (
+                <Note
+                  key={note.id}
+                  note={note}
+                  onEdit={() =>
+                    editNote(note)
+                  }
+                  onDelete={() =>
+                    deleteNote(note.id)
+                  }
+                />
+              ))}
+            </NoteGroup>
           ))}
-        </NoteGroup>
-      ))}
+        </>
+      )}
+
+      {activeTab === "flashcards" && (
+        <div style={placeholderStyle}>
+          <div style={{ fontSize: "48px" }}>📖</div>
+          <h2>Flashcards</h2>
+          <p>Create smart revision cards here.</p>
+        </div>
+      )}
+
+      {activeTab === "quiz" && (
+        <div style={placeholderStyle}>
+          <div style={{ fontSize: "48px" }}>🧪</div>
+          <h2>Quiz Mode</h2>
+          <p>Generate quizzes from notes.</p>
+        </div>
+      )}
+
+      {activeTab === "learn" && (
+        <div style={placeholderStyle}>
+          <div style={{ fontSize: "48px" }}>🎓</div>
+          <h2>Learn AI</h2>
+          <p>AI explanations and tutoring system.</p>
+        </div>
+      )}
 
       {/* FLOAT BUTTON */}
       <button
@@ -547,7 +575,6 @@ function Tab({
   );
 }
 
-{/* Patch 6: Fully replaced SubjectCard component utilizing icons, custom colors, and scaling states */}
 function SubjectCard({
   name,
   count,
@@ -632,7 +659,6 @@ function Chip({
   );
 }
 
-{/* Patch 7: Replaced NoteGroup component header to include icons alongside text titles */}
 function NoteGroup({
   subject,
   count,
@@ -754,6 +780,15 @@ function Note({
 }
 
 /* STYLES */
+
+const placeholderStyle = {
+  background: "white",
+  borderRadius: "24px",
+  padding: "40px 20px",
+  marginTop: "20px",
+  textAlign: "center",
+  boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
+};
 
 const menuBtn = {
   width: "44px",
@@ -886,4 +921,4 @@ const saveBtn = {
   color: "white",
   fontWeight: "800",
 };
-          
+        
