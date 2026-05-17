@@ -950,3 +950,5 @@ const tabsContainer = {
   borderRadius: "18px",
   boxShadow:
   "0 10px 30px rgba(0,0,0,0.05)",
+marginBottom: "22px",
+};
