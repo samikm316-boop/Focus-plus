@@ -9,7 +9,7 @@ export default function CreateModal({ editingNote, onClose, onSave }) {
     type: "Plain",
   });
 
-  // Automatically fills in data inputs if updating an existing entry item
+  // Fix #8: Reset form to empty when creating a new note, otherwise old data remains
   useEffect(() => {
     if (editingNote) {
       setForm({
@@ -17,6 +17,13 @@ export default function CreateModal({ editingNote, onClose, onSave }) {
         content: editingNote.content,
         subject: editingNote.subject,
         type: editingNote.type,
+      });
+    } else {
+      setForm({
+        title: "",
+        content: "",
+        subject: "Biology",
+        type: "Plain",
       });
     }
   }, [editingNote]);
@@ -26,6 +33,7 @@ export default function CreateModal({ editingNote, onClose, onSave }) {
     onSave(form);
   };
 
+  // Fix #1: Complete structural rewrite of the broken JSX block
   return (
     <div style={styles.modalOverlay}>
       <div style={styles.modalBox}>
@@ -118,4 +126,3 @@ const styles = {
     cursor: "pointer",
   },
 };
-
