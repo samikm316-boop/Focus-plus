@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react"; // Fix #2: Removed useMemo import
 import { Menu, SlidersHorizontal, Plus } from "lucide-react";
 import StudyTabs from "./components/StudyTabs";
 import SubjectBar from "./components/SubjectBar";
@@ -291,7 +291,8 @@ const styles = {
   floatingBtn: {
     position: "fixed",
     right: "18px",
-    bottom: "18px",
+    // Fix #5: Avoid overlapping device system navigation overlays on virtual screen spaces
+    bottom: "calc(18px + env(safe-area-inset-bottom))",
     width: "58px",
     height: "58px",
     borderRadius: "20px",
@@ -306,4 +307,3 @@ const styles = {
     zIndex: 10,
   },
 };
-                       
