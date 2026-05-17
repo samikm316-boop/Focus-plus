@@ -3,10 +3,9 @@ import {
   Menu,
   Plus,
   SlidersHorizontal,
-  Settings,
-  Pencil,
-  Trash2,
   X,
+  Trash2,
+  Pencil,
 } from "lucide-react";
 
 export default function StudyScreen({ openSidebar }) {
@@ -21,22 +20,22 @@ export default function StudyScreen({ openSidebar }) {
   const [showModal, setShowModal] =
     useState(false);
 
-  const [editingNote, setEditingNote] =
+  const [editingId, setEditingId] =
     useState(null);
 
-  const [noteTitle, setNoteTitle] =
-    useState("");
-
-  const [noteType, setNoteType] =
-    useState("Plain");
-
-  const [noteSubject, setNoteSubject] =
-    useState("Biology");
+  const [form, setForm] = useState({
+    title: "",
+    content: "",
+    subject: "Biology",
+    type: "Plain",
+  });
 
   const [notes, setNotes] = useState([
     {
       id: 1,
       title: "Cell Structure and Function",
+      content:
+        "Cells contain nucleus, mitochondria and ribosomes.",
       type: "Plain",
       subject: "Biology",
       date: "20 May",
@@ -45,6 +44,8 @@ export default function StudyScreen({ openSidebar }) {
     {
       id: 2,
       title: "Photosynthesis Process",
+      content:
+        "Plants convert sunlight into energy.",
       type: "Enhanced",
       subject: "Biology",
       date: "18 May",
@@ -53,9 +54,21 @@ export default function StudyScreen({ openSidebar }) {
     {
       id: 3,
       title: "Quadratic Equations",
+      content:
+        "ax² + bx + c = 0",
       type: "Plain",
       subject: "Maths",
       date: "19 May",
+    },
+
+    {
+      id: 4,
+      title: "World War 2 Overview",
+      content:
+        "Started in 1939.",
+      type: "Plain",
+      subject: "History",
+      date: "16 May",
     },
   ]);
 
@@ -70,73 +83,96 @@ export default function StudyScreen({ openSidebar }) {
   const filteredNotes = useMemo(() => {
     return notes.filter((note) => {
       const subjectMatch =
-        selectedSubject === "All" ||
-        note.subject === selectedSubject;
+        selectedSubject === "All"
+          ? true
+          : note.subject ===
+            selectedSubject;
 
       const typeMatch =
-        filter === "All" ||
-        note.type === filter;
+        filter === "All"
+          ? true
+          : note.type === filter;
 
       return subjectMatch && typeMatch;
     });
   }, [notes, selectedSubject, filter]);
 
   function openCreateModal() {
-    setEditingNote(null);
+    setEditingId(null);
 
-    setNoteTitle("");
-    setNoteType("Plain");
-    setNoteSubject("Biology");
-
-    setShowModal(true);
-  }
-
-  function openEditModal(note) {
-    setEditingNote(note);
-
-    setNoteTitle(note.title);
-    setNoteType(note.type);
-    setNoteSubject(note.subject);
+    setForm({
+      title: "",
+      content: "",
+      subject: "Biology",
+      type: "Plain",
+    });
 
     setShowModal(true);
   }
 
   function saveNote() {
-    if (!noteTitle.trim()) return;
+    if (!form.title.trim()) return;
 
-    if (editingNote) {
+    if (editingId) {
       setNotes((prev) =>
-        prev.map((note) =>
-          note.id === editingNote.id
+        prev.map((n) =>
+          n.id === editingId
             ? {
-                ...note,
-                title: noteTitle,
-                type: noteType,
-                subject: noteSubject,
+                ...n,
+                ...form,
               }
-            : note
+            : n
         )
       );
     } else {
-      const newNote = {
-        id: Date.now(),
-        title: noteTitle,
-        type: noteType,
-        subject: noteSubject,
-        date: "Today",
-      };
-
-      setNotes([newNote, ...notes]);
+      setNotes((prev) => [
+        {
+          id: Date.now(),
+          ...form,
+          date:
+            new Date().toLocaleDateString(
+              "en-GB",
+              {
+                day: "numeric",
+                month: "short",
+              }
+            ),
+        },
+        ...prev,
+      ]);
     }
 
     setShowModal(false);
   }
 
+  function editNote(note) {
+    setEditingId(note.id);
+
+    setForm({
+      title: note.title,
+      content: note.content,
+      subject: note.subject,
+      type: note.type,
+    });
+
+    setShowModal(true);
+  }
+
   function deleteNote(id) {
     setNotes((prev) =>
-      prev.filter((note) => note.id !== id)
+      prev.filter((n) => n.id !== id)
     );
   }
+
+  const groupedNotes = subjects
+    .filter((s) => s !== "All")
+    .map((subject) => ({
+      subject,
+      notes: filteredNotes.filter(
+        (n) => n.subject === subject
+      ),
+    }))
+    .filter((group) => group.notes.length);
 
   return (
     <div
@@ -145,6 +181,7 @@ export default function StudyScreen({ openSidebar }) {
         background: "#F6F7FB",
         padding: "18px",
         paddingBottom: "120px",
+        boxSizing: "border-box",
       }}
     >
       {/* TOP BAR */}
@@ -152,56 +189,35 @@ export default function StudyScreen({ openSidebar }) {
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent:
+            "space-between",
           marginBottom: "18px",
         }}
       >
         <button
           onClick={openSidebar}
-          style={topButtonStyle}
+          style={menuBtn}
         >
           <Menu size={22} />
         </button>
 
-        <h1
-          style={{
-            margin: 0,
-            fontSize: "20px",
-            fontWeight: "800",
-            color: "#6D28D9",
-          }}
-        >
+        <h1 style={titleStyle}>
           STUDY
         </h1>
 
-        <button style={topButtonStyle}>
-          <Settings size={20} />
-        </button>
+        <div style={{ width: "44px" }} />
       </div>
 
-      {/* TOP TABS */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          background: "white",
-          padding: "10px",
-          borderRadius: "18px",
-          boxShadow:
-            "0 10px 30px rgba(0,0,0,0.05)",
-          marginBottom: "22px",
-        }}
-      >
-        <Tab
-          icon="➕"
-          label="Create"
-          onClick={openCreateModal}
-        />
+      {/* TABS */}
+      <div style={tabsContainer}>
+        <Tab icon="➕" label="Create" />
 
         <Tab
           icon="📘"
           label="Notes"
-          active={activeTab === "notes"}
+          active={
+            activeTab === "notes"
+          }
           onClick={() =>
             setActiveTab("notes")
           }
@@ -210,303 +226,223 @@ export default function StudyScreen({ openSidebar }) {
         <Tab
           icon="📖"
           label="Flashcards"
-          active={activeTab === "flashcards"}
-          onClick={() =>
-            setActiveTab("flashcards")
-          }
         />
 
         <Tab
           icon="🧪"
           label="Quiz"
-          active={activeTab === "quiz"}
-          onClick={() =>
-            setActiveTab("quiz")
-          }
         />
 
         <Tab
           icon="🎓"
           label="Learn"
-          active={activeTab === "learn"}
-          onClick={() =>
-            setActiveTab("learn")
-          }
         />
       </div>
 
-      {/* SUBJECTS HEADER */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "14px",
-        }}
-      >
-        <h2
-          style={{
-            margin: 0,
-            fontSize: "16px",
-            fontWeight: "800",
-          }}
-        >
+      {/* SUBJECTS */}
+      <div style={sectionHeader}>
+        <h2 style={sectionTitle}>
           SUBJECTS
         </h2>
 
-        <button
-          onClick={() =>
-            setSelectedSubject("All")
-          }
-          style={{
-            border: "none",
-            background: "transparent",
-            color: "#7C3AED",
-            fontWeight: "700",
-            cursor: "pointer",
-          }}
-        >
+        <span style={viewAll}>
           View all
-        </button>
+        </span>
       </div>
 
-      {/* SUBJECT CARDS */}
-      <div
-        style={{
-          display: "flex",
-          gap: "12px",
-          overflowX: "auto",
-          paddingBottom: "8px",
-        }}
-      >
-        <SubjectCard
-          color="#DCFCE7"
-          icon="🌿"
-          name="Biology"
-          active={selectedSubject === "Biology"}
-          onClick={() =>
-            setSelectedSubject("Biology")
-          }
-        />
-
-        <SubjectCard
-          color="#DBEAFE"
-          icon="∑"
-          name="Maths"
-          active={selectedSubject === "Maths"}
-          onClick={() =>
-            setSelectedSubject("Maths")
-          }
-        />
-
-        <SubjectCard
-          color="#FFEDD5"
-          icon="🏛️"
-          name="History"
-          active={selectedSubject === "History"}
-          onClick={() =>
-            setSelectedSubject("History")
-          }
-        />
-
-        <SubjectCard
-          color="#EDE9FE"
-          icon="🧪"
-          name="Chemistry"
-          active={selectedSubject === "Chemistry"}
-          onClick={() =>
-            setSelectedSubject("Chemistry")
-          }
-        />
+      <div style={subjectsRow}>
+        {subjects
+          .filter((s) => s !== "All")
+          .map((subject) => (
+            <SubjectCard
+              key={subject}
+              name={subject}
+              active={
+                selectedSubject ===
+                subject
+              }
+              onClick={() =>
+                setSelectedSubject(
+                  subject
+                )
+              }
+              count={`${
+                notes.filter(
+                  (n) =>
+                    n.subject ===
+                    subject
+                ).length
+              } notes`}
+            />
+          ))}
       </div>
 
       {/* NOTES HEADER */}
-      <div
-        style={{
-          marginTop: "24px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h2
-          style={{
-            margin: 0,
-            fontSize: "16px",
-            fontWeight: "800",
-          }}
-        >
+      <div style={notesHeader}>
+        <h2 style={sectionTitle}>
           NOTES
         </h2>
 
-        <button style={topButtonStyle}>
-          <SlidersHorizontal size={18} />
-        </button>
+        <SlidersHorizontal
+          size={18}
+          color="#6B7280"
+        />
       </div>
 
       {/* FILTERS */}
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          marginTop: "12px",
-          marginBottom: "18px",
-        }}
-      >
-        {["All", "Plain", "Enhanced"].map(
-          (item) => (
-            <Chip
-              key={item}
-              label={item}
-              active={filter === item}
-              onClick={() =>
-                setFilter(item)
-              }
-            />
-          )
-        )}
-      </div>
-
-      {/* NOTES */}
-      <div>
-        {filteredNotes.map((note) => (
-          <NoteCard
-            key={note.id}
-            note={note}
-            onEdit={() =>
-              openEditModal(note)
-            }
-            onDelete={() =>
-              deleteNote(note.id)
+      <div style={filterRow}>
+        {[
+          "All",
+          "Plain",
+          "Enhanced",
+        ].map((f) => (
+          <Chip
+            key={f}
+            label={f}
+            active={filter === f}
+            onClick={() =>
+              setFilter(f)
             }
           />
         ))}
       </div>
 
+      {/* NOTES */}
+      {groupedNotes.map((group) => (
+        <NoteGroup
+          key={group.subject}
+          subject={group.subject}
+          count={`${group.notes.length} notes`}
+        >
+          {group.notes.map((note) => (
+            <Note
+              key={note.id}
+              note={note}
+              onEdit={() =>
+                editNote(note)
+              }
+              onDelete={() =>
+                deleteNote(note.id)
+              }
+            />
+          ))}
+        </NoteGroup>
+      ))}
+
       {/* FLOAT BUTTON */}
       <button
         onClick={openCreateModal}
-        style={{
-          position: "fixed",
-          right: "18px",
-          bottom: "18px",
-          width: "58px",
-          height: "58px",
-          borderRadius: "20px",
-          border: "none",
-          background:
-            "linear-gradient(135deg,#7C3AED,#2563EB)",
-          color: "white",
-          boxShadow:
-            "0 18px 40px rgba(124,77,255,0.35)",
-          cursor: "pointer",
-        }}
+        style={floatingBtn}
       >
         <Plus />
       </button>
 
       {/* MODAL */}
       {showModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.45)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 999,
-          }}
-        >
-          <div
-            style={{
-              width: "90%",
-              maxWidth: "380px",
-              background: "white",
-              borderRadius: "24px",
-              padding: "22px",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent:
-                  "space-between",
-                alignItems: "center",
-                marginBottom: "18px",
-              }}
-            >
-              <h2
-                style={{
-                  margin: 0,
-                  fontSize: "20px",
-                }}
-              >
-                {editingNote
+        <div style={modalOverlay}>
+          <div style={modalBox}>
+            <div style={modalHeader}>
+              <h3>
+                {editingId
                   ? "Edit Note"
                   : "Create Note"}
-              </h2>
+              </h3>
 
               <X
-                onClick={() =>
-                  setShowModal(false)
-                }
                 style={{
                   cursor: "pointer",
                 }}
+                onClick={() =>
+                  setShowModal(false)
+                }
               />
             </div>
 
             <input
-              value={noteTitle}
+              placeholder="Title"
+              value={form.title}
               onChange={(e) =>
-                setNoteTitle(e.target.value)
+                setForm({
+                  ...form,
+                  title:
+                    e.target.value,
+                })
               }
-              placeholder="Note title"
               style={inputStyle}
             />
 
-            <select
-              value={noteSubject}
+            <textarea
+              placeholder="Content"
+              value={form.content}
               onChange={(e) =>
-                setNoteSubject(e.target.value)
+                setForm({
+                  ...form,
+                  content:
+                    e.target.value,
+                })
+              }
+              style={{
+                ...inputStyle,
+                height: "120px",
+                resize: "none",
+              }}
+            />
+
+            <select
+              value={form.subject}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  subject:
+                    e.target.value,
+                })
               }
               style={inputStyle}
             >
-              <option>Biology</option>
-              <option>Maths</option>
-              <option>History</option>
-              <option>Chemistry</option>
+              <option>
+                Biology
+              </option>
+
+              <option>
+                Maths
+              </option>
+
+              <option>
+                History
+              </option>
+
+              <option>
+                Chemistry
+              </option>
             </select>
 
             <select
-              value={noteType}
+              value={form.type}
               onChange={(e) =>
-                setNoteType(e.target.value)
+                setForm({
+                  ...form,
+                  type:
+                    e.target.value,
+                })
               }
               style={inputStyle}
             >
-              <option>Plain</option>
-              <option>Enhanced</option>
+              <option>
+                Plain
+              </option>
+
+              <option>
+                Enhanced
+              </option>
             </select>
 
             <button
               onClick={saveNote}
-              style={{
-                width: "100%",
-                marginTop: "16px",
-                border: "none",
-                padding: "14px",
-                borderRadius: "16px",
-                background:
-                  "linear-gradient(135deg,#7C3AED,#2563EB)",
-                color: "white",
-                fontWeight: "700",
-                cursor: "pointer",
-              }}
+              style={saveBtn}
             >
-              {editingNote
+              {editingId
                 ? "Update Note"
-                : "Create Note"}
+                : "Save Note"}
             </button>
           </div>
         </div>
@@ -540,10 +476,14 @@ function Tab({
         fontWeight: "700",
         fontSize: "12px",
         cursor: "pointer",
-        transition: "0.2s",
+        transition: "0.25s",
       }}
     >
-      <div style={{ fontSize: "16px" }}>
+      <div
+        style={{
+          fontSize: "16px",
+        }}
+      >
         {icon}
       </div>
 
@@ -553,9 +493,8 @@ function Tab({
 }
 
 function SubjectCard({
-  color,
-  icon,
   name,
+  count,
   active,
   onClick,
 }) {
@@ -564,30 +503,32 @@ function SubjectCard({
       onClick={onClick}
       style={{
         minWidth: "120px",
-        background: color,
+        background: active
+          ? "#DDD6FE"
+          : "white",
         padding: "14px",
         borderRadius: "18px",
         cursor: "pointer",
-        transform: active
-          ? "scale(1.05)"
-          : "scale(1)",
-        border: active
-          ? "2px solid #7C3AED"
-          : "2px solid transparent",
-        transition: "0.2s",
+        transition: "0.25s",
+        boxShadow:
+          "0 10px 25px rgba(0,0,0,0.05)",
       }}
     >
-      <div style={{ fontSize: "20px" }}>
-        {icon}
+      <div
+        style={{
+          fontWeight: "800",
+        }}
+      >
+        {name}
       </div>
 
       <div
         style={{
-          fontWeight: "800",
-          marginTop: "6px",
+          fontSize: "12px",
+          color: "#555",
         }}
       >
-        {name}
+        {count}
       </div>
     </div>
   );
@@ -599,11 +540,9 @@ function Chip({
   onClick,
 }) {
   return (
-    <button
+    <div
       onClick={onClick}
       style={{
-        border: "none",
-        cursor: "pointer",
         padding: "8px 14px",
         borderRadius: "999px",
         background: active
@@ -613,14 +552,49 @@ function Chip({
           ? "#6D28D9"
           : "#6B7280",
         fontWeight: "700",
+        fontSize: "12px",
+        cursor: "pointer",
       }}
     >
       {label}
-    </button>
+    </div>
   );
 }
 
-function NoteCard({
+function NoteGroup({
+  subject,
+  count,
+  children,
+}) {
+  return (
+    <div
+      style={{
+        marginBottom: "18px",
+      }}
+    >
+      <div
+        style={{
+          marginBottom: "10px",
+          fontWeight: "800",
+        }}
+      >
+        {subject}
+        <span
+          style={{
+            color: "#9CA3AF",
+          }}
+        >
+          {" "}
+          • {count}
+        </span>
+      </div>
+
+      {children}
+    </div>
+  );
+}
+
+function Note({
   note,
   onEdit,
   onDelete,
@@ -629,11 +603,11 @@ function NoteCard({
     <div
       style={{
         background: "white",
-        padding: "16px",
-        borderRadius: "18px",
-        marginBottom: "12px",
+        padding: "14px",
+        borderRadius: "16px",
+        marginBottom: "10px",
         boxShadow:
-          "0 10px 25px rgba(0,0,0,0.05)",
+          "0 10px 25px rgba(0,0,0,0.04)",
       }}
     >
       <div
@@ -643,12 +617,24 @@ function NoteCard({
             "space-between",
         }}
       >
-        <div
-          style={{
-            fontWeight: "800",
-          }}
-        >
-          {note.title}
+        <div>
+          <div
+            style={{
+              fontWeight: "800",
+            }}
+          >
+            {note.title}
+          </div>
+
+          <div
+            style={{
+              fontSize: "13px",
+              color: "#666",
+              marginTop: "6px",
+            }}
+          >
+            {note.content}
+          </div>
         </div>
 
         <div
@@ -658,60 +644,172 @@ function NoteCard({
           }}
         >
           <Pencil
-            size={18}
-            onClick={onEdit}
+            size={16}
             style={{
               cursor: "pointer",
             }}
+            onClick={onEdit}
           />
 
           <Trash2
-            size={18}
-            onClick={onDelete}
+            size={16}
+            color="red"
             style={{
               cursor: "pointer",
-              color: "#EF4444",
             }}
+            onClick={onDelete}
           />
         </div>
       </div>
 
       <div
         style={{
-          marginTop: "8px",
           display: "flex",
           justifyContent:
             "space-between",
+          marginTop: "10px",
           fontSize: "12px",
           color: "#6B7280",
         }}
       >
         <span>{note.type}</span>
+
         <span>{note.date}</span>
       </div>
     </div>
   );
 }
 
-const topButtonStyle = {
+/* STYLES */
+
+const menuBtn = {
   width: "44px",
   height: "44px",
   borderRadius: "14px",
   border: "none",
   background: "white",
-  boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+  boxShadow:
+    "0 6px 18px rgba(0,0,0,0.06)",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  cursor: "pointer",
+};
+
+const titleStyle = {
+  margin: 0,
+  fontSize: "20px",
+  fontWeight: "800",
+  color: "#6D28D9",
+};
+
+const tabsContainer = {
+  display: "flex",
+  justifyContent: "space-between",
+  background: "white",
+  padding: "10px",
+  borderRadius: "18px",
+  boxShadow:
+    "0 10px 30px rgba(0,0,0,0.05)",
+  marginBottom: "22px",
+};
+
+const sectionHeader = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "14px",
+};
+
+const sectionTitle = {
+  margin: 0,
+  fontSize: "16px",
+  fontWeight: "800",
+};
+
+const viewAll = {
+  color: "#7C3AED",
+  fontWeight: "700",
+  fontSize: "13px",
+};
+
+const subjectsRow = {
+  display: "flex",
+  gap: "12px",
+  overflowX: "auto",
+  paddingBottom: "8px",
+};
+
+const notesHeader = {
+  marginTop: "24px",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+};
+
+const filterRow = {
+  display: "flex",
+  gap: "10px",
+  marginTop: "12px",
+  marginBottom: "18px",
+};
+
+const floatingBtn = {
+  position: "fixed",
+  right: "18px",
+  bottom: "18px",
+  width: "58px",
+  height: "58px",
+  borderRadius: "20px",
+  border: "none",
+  background:
+    "linear-gradient(135deg,#7C3AED,#2563EB)",
+  color: "white",
+  fontSize: "26px",
+  boxShadow:
+    "0 18px 40px rgba(124,77,255,0.35)",
+};
+
+const modalOverlay = {
+  position: "fixed",
+  inset: 0,
+  background: "rgba(0,0,0,0.4)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 999,
+};
+
+const modalBox = {
+  width: "90%",
+  maxWidth: "400px",
+  background: "white",
+  borderRadius: "24px",
+  padding: "20px",
+};
+
+const modalHeader = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "14px",
 };
 
 const inputStyle = {
   width: "100%",
-  padding: "14px",
+  padding: "12px",
   borderRadius: "14px",
   border: "1px solid #E5E7EB",
   marginBottom: "12px",
-  fontSize: "14px",
   boxSizing: "border-box",
+};
+
+const saveBtn = {
+  width: "100%",
+  padding: "14px",
+  borderRadius: "16px",
+  border: "none",
+  background:
+    "linear-gradient(135deg,#7C3AED,#2563EB)",
+  color: "white",
+  fontWeight: "800",
 };
