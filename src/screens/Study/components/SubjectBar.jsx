@@ -41,36 +41,16 @@ export default function SubjectBar({ subjects, notes, selectedSubject, setSelect
 }
 
 const styles = {
-  sectionHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "14px",
-  },
-  sectionTitle: {
-    margin: 0,
-    fontSize: "16px",
-    fontWeight: "800",
-  },
-  viewAll: {
-    color: "#7C3AED",
-    fontWeight: "700",
-    fontSize: "13px",
-    cursor: "pointer",
-  },
+  sectionHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" },
+  sectionTitle: { margin: 0, fontSize: "16px", fontWeight: "800" },
+  viewAll: { color: "#7C3AED", fontWeight: "700", fontSize: "13px", cursor: "pointer" },
   subjectsRow: {
     display: "flex",
     gap: "12px",
     overflowX: "auto",
     paddingBottom: "8px",
+    // Fix #4: Ensures silky smooth cross-platform hardware acceleration on mobile touch gestures
+    WebkitOverflowScrolling: "touch",
   },
-  subjectCard: {
-    minWidth: "130px",
-    padding: "14px",
-    borderRadius: "20px",
-    cursor: "pointer",
-    transition: "0.25s",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.05)",
-  },
+  subjectCard: { minWidth: "130px", padding: "14px", borderRadius: "20px", cursor: "pointer", transition: "0.25s", boxShadow: "0 10px 25px rgba(0,0,0,0.05)" },
 };
-
