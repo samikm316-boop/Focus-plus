@@ -1,22 +1,63 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Menu,
   Plus,
   SlidersHorizontal,
-  ArrowLeft,
+  Settings,
+  Pencil,
+  Trash2,
+  X,
 } from "lucide-react";
 
-export default function StudyScreen({
-  openSidebar,
-}) {
-  const [activeTab, setActiveTab] =
-    useState("notes");
+export default function StudyScreen({ openSidebar }) {
+  const [activeTab, setActiveTab] = useState("notes");
 
   const [selectedSubject, setSelectedSubject] =
     useState("All");
 
-  const [noteFilter, setNoteFilter] =
+  const [filter, setFilter] =
     useState("All");
+
+  const [showModal, setShowModal] =
+    useState(false);
+
+  const [editingNote, setEditingNote] =
+    useState(null);
+
+  const [noteTitle, setNoteTitle] =
+    useState("");
+
+  const [noteType, setNoteType] =
+    useState("Plain");
+
+  const [noteSubject, setNoteSubject] =
+    useState("Biology");
+
+  const [notes, setNotes] = useState([
+    {
+      id: 1,
+      title: "Cell Structure and Function",
+      type: "Plain",
+      subject: "Biology",
+      date: "20 May",
+    },
+
+    {
+      id: 2,
+      title: "Photosynthesis Process",
+      type: "Enhanced",
+      subject: "Biology",
+      date: "18 May",
+    },
+
+    {
+      id: 3,
+      title: "Quadratic Equations",
+      type: "Plain",
+      subject: "Maths",
+      date: "19 May",
+    },
+  ]);
 
   const subjects = [
     "All",
@@ -26,40 +67,76 @@ export default function StudyScreen({
     "Chemistry",
   ];
 
-  const notes = [
-    {
-      title: "Cell Structure and Function",
-      type: "Plain",
-      date: "20 May",
-      subject: "Biology",
-    },
-    {
-      title: "Photosynthesis Process",
-      type: "Enhanced",
-      date: "18 May",
-      subject: "Biology",
-    },
-    {
-      title: "Quadratic Equations",
-      type: "Plain",
-      date: "17 May",
-      subject: "Maths",
-    },
-  ];
-
-  const filteredNotes = notes.filter(
-    (note) => {
+  const filteredNotes = useMemo(() => {
+    return notes.filter((note) => {
       const subjectMatch =
         selectedSubject === "All" ||
         note.subject === selectedSubject;
 
       const typeMatch =
-        noteFilter === "All" ||
-        note.type === noteFilter;
+        filter === "All" ||
+        note.type === filter;
 
       return subjectMatch && typeMatch;
+    });
+  }, [notes, selectedSubject, filter]);
+
+  function openCreateModal() {
+    setEditingNote(null);
+
+    setNoteTitle("");
+    setNoteType("Plain");
+    setNoteSubject("Biology");
+
+    setShowModal(true);
+  }
+
+  function openEditModal(note) {
+    setEditingNote(note);
+
+    setNoteTitle(note.title);
+    setNoteType(note.type);
+    setNoteSubject(note.subject);
+
+    setShowModal(true);
+  }
+
+  function saveNote() {
+    if (!noteTitle.trim()) return;
+
+    if (editingNote) {
+      setNotes((prev) =>
+        prev.map((note) =>
+          note.id === editingNote.id
+            ? {
+                ...note,
+                title: noteTitle,
+                type: noteType,
+                subject: noteSubject,
+              }
+            : note
+        )
+      );
+    } else {
+      const newNote = {
+        id: Date.now(),
+        title: noteTitle,
+        type: noteType,
+        subject: noteSubject,
+        date: "Today",
+      };
+
+      setNotes([newNote, ...notes]);
     }
-  );
+
+    setShowModal(false);
+  }
+
+  function deleteNote(id) {
+    setNotes((prev) =>
+      prev.filter((note) => note.id !== id)
+    );
+  }
 
   return (
     <div
@@ -68,23 +145,20 @@ export default function StudyScreen({
         background: "#F6F7FB",
         padding: "18px",
         paddingBottom: "120px",
-        boxSizing: "border-box",
       }}
     >
       {/* TOP BAR */}
-
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent:
-            "space-between",
+          justifyContent: "space-between",
           marginBottom: "18px",
         }}
       >
         <button
           onClick={openSidebar}
-          style={topButton}
+          style={topButtonStyle}
         >
           <Menu size={22} />
         </button>
@@ -95,43 +169,36 @@ export default function StudyScreen({
             fontSize: "20px",
             fontWeight: "800",
             color: "#6D28D9",
-            letterSpacing: "1px",
           }}
         >
           STUDY
         </h1>
 
-        <button style={topButton}>
-          <SlidersHorizontal size={18} />
+        <button style={topButtonStyle}>
+          <Settings size={20} />
         </button>
       </div>
 
-      {/* TOP NAV */}
-
+      {/* TOP TABS */}
       <div
         style={{
           display: "flex",
-          justifyContent:
-            "space-between",
+          justifyContent: "space-between",
           background: "white",
           padding: "10px",
-          borderRadius: "22px",
+          borderRadius: "18px",
           boxShadow:
             "0 10px 30px rgba(0,0,0,0.05)",
-          marginBottom: "24px",
-          gap: "8px",
+          marginBottom: "22px",
         }}
       >
-        <TopTab
+        <Tab
           icon="➕"
           label="Create"
-          active={activeTab === "create"}
-          onClick={() =>
-            setActiveTab("create")
-          }
+          onClick={openCreateModal}
         />
 
-        <TopTab
+        <Tab
           icon="📘"
           label="Notes"
           active={activeTab === "notes"}
@@ -140,18 +207,16 @@ export default function StudyScreen({
           }
         />
 
-        <TopTab
+        <Tab
           icon="📖"
           label="Flashcards"
-          active={
-            activeTab === "flashcards"
-          }
+          active={activeTab === "flashcards"}
           onClick={() =>
             setActiveTab("flashcards")
           }
         />
 
-        <TopTab
+        <Tab
           icon="🧪"
           label="Quiz"
           active={activeTab === "quiz"}
@@ -160,7 +225,7 @@ export default function StudyScreen({
           }
         />
 
-        <TopTab
+        <Tab
           icon="🎓"
           label="Learn"
           active={activeTab === "learn"}
@@ -170,259 +235,289 @@ export default function StudyScreen({
         />
       </div>
 
-      {/* RENDER TABS */}
+      {/* SUBJECTS HEADER */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "14px",
+        }}
+      >
+        <h2
+          style={{
+            margin: 0,
+            fontSize: "16px",
+            fontWeight: "800",
+          }}
+        >
+          SUBJECTS
+        </h2>
 
-      {activeTab === "notes" && (
-        <>
-          {/* SUBJECTS */}
+        <button
+          onClick={() =>
+            setSelectedSubject("All")
+          }
+          style={{
+            border: "none",
+            background: "transparent",
+            color: "#7C3AED",
+            fontWeight: "700",
+            cursor: "pointer",
+          }}
+        >
+          View all
+        </button>
+      </div>
 
-          <div
-            style={{
-              display: "flex",
-              justifyContent:
-                "space-between",
-              alignItems: "center",
-              marginBottom: "14px",
-            }}
-          >
-            <h2
-              style={{
-                margin: 0,
-                fontSize: "16px",
-                fontWeight: "800",
-              }}
-            >
-              SUBJECTS
-            </h2>
-
-            <span
-              style={{
-                color: "#7C3AED",
-                fontWeight: "700",
-                fontSize: "13px",
-              }}
-            >
-              View all
-            </span>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              gap: "12px",
-              overflowX: "auto",
-              paddingBottom: "10px",
-            }}
-          >
-            <SubjectCard
-              active={
-                selectedSubject === "All"
-              }
-              onClick={() =>
-                setSelectedSubject("All")
-              }
-              color="#F3E8FF"
-              icon="📚"
-              name="All"
-              count="All notes"
-            />
-
-            <SubjectCard
-              active={
-                selectedSubject ===
-                "Biology"
-              }
-              onClick={() =>
-                setSelectedSubject(
-                  "Biology"
-                )
-              }
-              color="#DCFCE7"
-              icon="🌿"
-              name="Biology"
-              count="12 notes"
-            />
-
-            <SubjectCard
-              active={
-                selectedSubject ===
-                "Maths"
-              }
-              onClick={() =>
-                setSelectedSubject("Maths")
-              }
-              color="#DBEAFE"
-              icon="∑"
-              name="Maths"
-              count="15 notes"
-            />
-
-            <SubjectCard
-              active={
-                selectedSubject ===
-                "History"
-              }
-              onClick={() =>
-                setSelectedSubject(
-                  "History"
-                )
-              }
-              color="#FFEDD5"
-              icon="🏛️"
-              name="History"
-              count="8 notes"
-            />
-          </div>
-
-          {/* NOTES */}
-
-          <div
-            style={{
-              marginTop: "24px",
-              display: "flex",
-              justifyContent:
-                "space-between",
-              alignItems: "center",
-            }}
-          >
-            <h2
-              style={{
-                margin: 0,
-                fontSize: "16px",
-                fontWeight: "800",
-              }}
-            >
-              NOTES
-            </h2>
-
-            <SlidersHorizontal
-              size={18}
-              color="#6B7280"
-            />
-          </div>
-
-          {/* FILTERS */}
-
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-              marginTop: "14px",
-              marginBottom: "18px",
-            }}
-          >
-            {[
-              "All",
-              "Plain",
-              "Enhanced",
-            ].map((filter) => (
-              <Chip
-                key={filter}
-                label={filter}
-                active={
-                  noteFilter === filter
-                }
-                onClick={() =>
-                  setNoteFilter(filter)
-                }
-              />
-            ))}
-          </div>
-
-          {/* NOTES LIST */}
-
-          {filteredNotes.map(
-            (note, index) => (
-              <Note
-                key={index}
-                title={note.title}
-                type={note.type}
-                date={note.date}
-                highlight={
-                  note.type ===
-                  "Enhanced"
-                }
-              />
-            )
-          )}
-        </>
-      )}
-
-      {activeTab === "flashcards" && (
-        <SubPage
-          title="Flashcards"
-          subtitle="Interactive memory learning"
-          emoji="📖"
+      {/* SUBJECT CARDS */}
+      <div
+        style={{
+          display: "flex",
+          gap: "12px",
+          overflowX: "auto",
+          paddingBottom: "8px",
+        }}
+      >
+        <SubjectCard
+          color="#DCFCE7"
+          icon="🌿"
+          name="Biology"
+          active={selectedSubject === "Biology"}
+          onClick={() =>
+            setSelectedSubject("Biology")
+          }
         />
-      )}
 
-      {activeTab === "quiz" && (
-        <SubPage
-          title="Quiz"
-          subtitle="Test your knowledge"
-          emoji="🧪"
+        <SubjectCard
+          color="#DBEAFE"
+          icon="∑"
+          name="Maths"
+          active={selectedSubject === "Maths"}
+          onClick={() =>
+            setSelectedSubject("Maths")
+          }
         />
-      )}
 
-      {activeTab === "learn" && (
-        <SubPage
-          title="Learn"
-          subtitle="AI learning experience"
-          emoji="🎓"
+        <SubjectCard
+          color="#FFEDD5"
+          icon="🏛️"
+          name="History"
+          active={selectedSubject === "History"}
+          onClick={() =>
+            setSelectedSubject("History")
+          }
         />
-      )}
 
-      {activeTab === "create" && (
-        <SubPage
-          title="Create"
-          subtitle="Generate study content"
-          emoji="➕"
+        <SubjectCard
+          color="#EDE9FE"
+          icon="🧪"
+          name="Chemistry"
+          active={selectedSubject === "Chemistry"}
+          onClick={() =>
+            setSelectedSubject("Chemistry")
+          }
         />
-      )}
+      </div>
+
+      {/* NOTES HEADER */}
+      <div
+        style={{
+          marginTop: "24px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h2
+          style={{
+            margin: 0,
+            fontSize: "16px",
+            fontWeight: "800",
+          }}
+        >
+          NOTES
+        </h2>
+
+        <button style={topButtonStyle}>
+          <SlidersHorizontal size={18} />
+        </button>
+      </div>
+
+      {/* FILTERS */}
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginTop: "12px",
+          marginBottom: "18px",
+        }}
+      >
+        {["All", "Plain", "Enhanced"].map(
+          (item) => (
+            <Chip
+              key={item}
+              label={item}
+              active={filter === item}
+              onClick={() =>
+                setFilter(item)
+              }
+            />
+          )
+        )}
+      </div>
+
+      {/* NOTES */}
+      <div>
+        {filteredNotes.map((note) => (
+          <NoteCard
+            key={note.id}
+            note={note}
+            onEdit={() =>
+              openEditModal(note)
+            }
+            onDelete={() =>
+              deleteNote(note.id)
+            }
+          />
+        ))}
+      </div>
 
       {/* FLOAT BUTTON */}
-
       <button
+        onClick={openCreateModal}
         style={{
           position: "fixed",
           right: "18px",
           bottom: "18px",
-          width: "60px",
-          height: "60px",
-          borderRadius: "22px",
+          width: "58px",
+          height: "58px",
+          borderRadius: "20px",
           border: "none",
           background:
             "linear-gradient(135deg,#7C3AED,#2563EB)",
           color: "white",
           boxShadow:
             "0 18px 40px rgba(124,77,255,0.35)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          cursor: "pointer",
         }}
       >
         <Plus />
       </button>
+
+      {/* MODAL */}
+      {showModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.45)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 999,
+          }}
+        >
+          <div
+            style={{
+              width: "90%",
+              maxWidth: "380px",
+              background: "white",
+              borderRadius: "24px",
+              padding: "22px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent:
+                  "space-between",
+                alignItems: "center",
+                marginBottom: "18px",
+              }}
+            >
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: "20px",
+                }}
+              >
+                {editingNote
+                  ? "Edit Note"
+                  : "Create Note"}
+              </h2>
+
+              <X
+                onClick={() =>
+                  setShowModal(false)
+                }
+                style={{
+                  cursor: "pointer",
+                }}
+              />
+            </div>
+
+            <input
+              value={noteTitle}
+              onChange={(e) =>
+                setNoteTitle(e.target.value)
+              }
+              placeholder="Note title"
+              style={inputStyle}
+            />
+
+            <select
+              value={noteSubject}
+              onChange={(e) =>
+                setNoteSubject(e.target.value)
+              }
+              style={inputStyle}
+            >
+              <option>Biology</option>
+              <option>Maths</option>
+              <option>History</option>
+              <option>Chemistry</option>
+            </select>
+
+            <select
+              value={noteType}
+              onChange={(e) =>
+                setNoteType(e.target.value)
+              }
+              style={inputStyle}
+            >
+              <option>Plain</option>
+              <option>Enhanced</option>
+            </select>
+
+            <button
+              onClick={saveNote}
+              style={{
+                width: "100%",
+                marginTop: "16px",
+                border: "none",
+                padding: "14px",
+                borderRadius: "16px",
+                background:
+                  "linear-gradient(135deg,#7C3AED,#2563EB)",
+                color: "white",
+                fontWeight: "700",
+                cursor: "pointer",
+              }}
+            >
+              {editingNote
+                ? "Update Note"
+                : "Create Note"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-/* ---------- COMPONENTS ---------- */
+/* COMPONENTS */
 
-const topButton = {
-  width: "44px",
-  height: "44px",
-  borderRadius: "14px",
-  border: "none",
-  background: "white",
-  boxShadow:
-    "0 6px 18px rgba(0,0,0,0.06)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-};
-
-function TopTab({
+function Tab({
   icon,
   label,
   active,
@@ -434,8 +529,8 @@ function TopTab({
       style={{
         flex: 1,
         textAlign: "center",
-        padding: "10px 8px",
-        borderRadius: "16px",
+        padding: "8px",
+        borderRadius: "14px",
         background: active
           ? "#F3E8FF"
           : "transparent",
@@ -443,32 +538,16 @@ function TopTab({
           ? "#6D28D9"
           : "#6B7280",
         fontWeight: "700",
-        fontSize: "11px",
+        fontSize: "12px",
         cursor: "pointer",
         transition: "0.2s",
       }}
     >
-      <div
-        style={{
-          fontSize: "18px",
-          marginBottom: "4px",
-        }}
-      >
+      <div style={{ fontSize: "16px" }}>
         {icon}
       </div>
 
       {label}
-
-      {active && (
-        <div
-          style={{
-            height: "3px",
-            background: "#6D28D9",
-            borderRadius: "999px",
-            marginTop: "7px",
-          }}
-        />
-      )}
     </div>
   );
 }
@@ -477,7 +556,6 @@ function SubjectCard({
   color,
   icon,
   name,
-  count,
   active,
   onClick,
 }) {
@@ -488,10 +566,10 @@ function SubjectCard({
         minWidth: "120px",
         background: color,
         padding: "14px",
-        borderRadius: "20px",
+        borderRadius: "18px",
         cursor: "pointer",
         transform: active
-          ? "scale(1.04)"
+          ? "scale(1.05)"
           : "scale(1)",
         border: active
           ? "2px solid #7C3AED"
@@ -499,27 +577,17 @@ function SubjectCard({
         transition: "0.2s",
       }}
     >
-      <div style={{ fontSize: "22px" }}>
+      <div style={{ fontSize: "20px" }}>
         {icon}
       </div>
 
       <div
         style={{
           fontWeight: "800",
-          marginTop: "8px",
+          marginTop: "6px",
         }}
       >
         {name}
-      </div>
-
-      <div
-        style={{
-          fontSize: "12px",
-          color: "#555",
-          marginTop: "2px",
-        }}
-      >
-        {count}
       </div>
     </div>
   );
@@ -531,10 +599,12 @@ function Chip({
   onClick,
 }) {
   return (
-    <div
+    <button
       onClick={onClick}
       style={{
-        padding: "9px 15px",
+        border: "none",
+        cursor: "pointer",
+        padding: "8px 14px",
         borderRadius: "999px",
         background: active
           ? "#EDE9FE"
@@ -543,20 +613,17 @@ function Chip({
           ? "#6D28D9"
           : "#6B7280",
         fontWeight: "700",
-        fontSize: "12px",
-        cursor: "pointer",
       }}
     >
       {label}
-    </div>
+    </button>
   );
 }
 
-function Note({
-  title,
-  type,
-  date,
-  highlight,
+function NoteCard({
+  note,
+  onEdit,
+  onDelete,
 }) {
   return (
     <div
@@ -566,87 +633,85 @@ function Note({
         borderRadius: "18px",
         marginBottom: "12px",
         boxShadow:
-          "0 10px 25px rgba(0,0,0,0.04)",
-        border: highlight
-          ? "1px solid #A78BFA"
-          : "1px solid transparent",
+          "0 10px 25px rgba(0,0,0,0.05)",
       }}
     >
-      <div
-        style={{
-          fontWeight: "800",
-          fontSize: "15px",
-        }}
-      >
-        {title}
-      </div>
-
       <div
         style={{
           display: "flex",
           justifyContent:
             "space-between",
+        }}
+      >
+        <div
+          style={{
+            fontWeight: "800",
+          }}
+        >
+          {note.title}
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+          }}
+        >
+          <Pencil
+            size={18}
+            onClick={onEdit}
+            style={{
+              cursor: "pointer",
+            }}
+          />
+
+          <Trash2
+            size={18}
+            onClick={onDelete}
+            style={{
+              cursor: "pointer",
+              color: "#EF4444",
+            }}
+          />
+        </div>
+      </div>
+
+      <div
+        style={{
           marginTop: "8px",
+          display: "flex",
+          justifyContent:
+            "space-between",
           fontSize: "12px",
           color: "#6B7280",
         }}
       >
-        <span
-          style={{
-            color: highlight
-              ? "#7C3AED"
-              : "#6B7280",
-            fontWeight: "700",
-          }}
-        >
-          {type}
-        </span>
-
-        <span>{date}</span>
+        <span>{note.type}</span>
+        <span>{note.date}</span>
       </div>
     </div>
   );
 }
 
-function SubPage({
-  title,
-  subtitle,
-  emoji,
-}) {
-  return (
-    <div
-      style={{
-        marginTop: "40px",
-        textAlign: "center",
-      }}
-    >
-      <div
-        style={{
-          fontSize: "70px",
-        }}
-      >
-        {emoji}
-      </div>
+const topButtonStyle = {
+  width: "44px",
+  height: "44px",
+  borderRadius: "14px",
+  border: "none",
+  background: "white",
+  boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer",
+};
 
-      <h1
-        style={{
-          fontSize: "30px",
-          fontWeight: "800",
-          color: "#111827",
-          marginBottom: "10px",
-        }}
-      >
-        {title}
-      </h1>
-
-      <p
-        style={{
-          color: "#6B7280",
-          fontWeight: "500",
-        }}
-      >
-        {subtitle}
-      </p>
-    </div>
-  );
-}
+const inputStyle = {
+  width: "100%",
+  padding: "14px",
+  borderRadius: "14px",
+  border: "1px solid #E5E7EB",
+  marginBottom: "12px",
+  fontSize: "14px",
+  boxSizing: "border-box",
+};
