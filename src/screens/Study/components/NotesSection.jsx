@@ -3,7 +3,6 @@ import { Pencil, Trash2 } from "lucide-react";
 
 export default function NotesSection({ notes, subjects, selectedSubject, filter, onEdit, onDelete }) {
   
-  // Calculate dynamic filters accurately
   const filteredNotes = useMemo(() => {
     return notes.filter((note) => {
       const subjectMatch = selectedSubject === "All" ? true : note.subject === selectedSubject;
@@ -12,7 +11,6 @@ export default function NotesSection({ notes, subjects, selectedSubject, filter,
     });
   }, [notes, selectedSubject, filter]);
 
-  // Safely map notes layout by their subject groups
   const groupedNotes = useMemo(() => {
     return subjects
       .filter((s) => s.name !== "All")
@@ -23,6 +21,15 @@ export default function NotesSection({ notes, subjects, selectedSubject, filter,
       }))
       .filter((group) => group.notesList.length > 0);
   }, [subjects, filteredNotes]);
+
+  // Fix #7: Direct context check for empty results across selected filter configurations
+  if (!groupedNotes.length) {
+    return (
+      <div style={styles.emptyState}>
+        No notes found matching your selection.
+      </div>
+    );
+  }
 
   return (
     <>
@@ -58,23 +65,9 @@ export default function NotesSection({ notes, subjects, selectedSubject, filter,
 }
 
 const styles = {
-  groupHeader: {
-    marginBottom: "10px",
-    fontWeight: "800",
-  },
-  noteCard: {
-    background: "white",
-    padding: "14px",
-    borderRadius: "16px",
-    marginBottom: "10px",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.04)",
-  },
-  noteFooter: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginTop: "10px",
-    fontSize: "12px",
-    color: "#6B7280",
-  },
+  groupHeader: { marginBottom: "10px", fontWeight: "800" },
+  noteCard: { background: "white", padding: "14px", borderRadius: "16px", marginBottom: "10px", boxShadow: "0 10px 25px rgba(0,0,0,0.04)" },
+  noteFooter: { display: "flex", justifyContent: "space-between", marginTop: "10px", fontSize: "12px", color: "#6B7280" },
+  emptyState: { textAlign: "center", padding: "40px 20px", color: "#6B7280", fontWeight: "600", fontSize: "14px" }
 };
-
+  
