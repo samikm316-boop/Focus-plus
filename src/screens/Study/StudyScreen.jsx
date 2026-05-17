@@ -363,7 +363,6 @@ export default function StudyScreen({ openSidebar }) {
 
       {/* NOTES */}
       {groupedNotes.map((group) => (
-        {/* Patch 8: Correctly feeding the grouped emoji icon straight into NoteGroup */}
         <NoteGroup
           key={group.subject}
           subject={group.subject}
