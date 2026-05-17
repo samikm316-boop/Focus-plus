@@ -270,8 +270,21 @@ export default function StudyScreen({ openSidebar }) {
             .filter((s) => s.name !== "All")
             .map((subjectObj) => {
               const subjectCards = flashcards.filter(
-                (f) => f.subject === subjectObj.name && (filter === "All" ? true : f.type === filter)
-              );
+  (f) => {
+    const subjectMatch =
+      selectedSubject === "All"
+        ? f.subject === subjectObj.name
+        : f.subject === selectedSubject &&
+          f.subject === subjectObj.name;
+
+    const typeMatch =
+      filter === "All"
+        ? true
+        : f.type === filter;
+
+    return subjectMatch && typeMatch;
+  }
+);
               if (!subjectCards.length) return null;
 
               return (
