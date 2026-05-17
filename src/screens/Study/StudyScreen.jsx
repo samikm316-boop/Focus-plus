@@ -98,7 +98,6 @@ export default function StudyScreen({ openSidebar }) {
     },
   ]);
 
-  // Patch 1: Updated subjects structure with icons and colors
   const subjects = [
     {
       name: "All",
@@ -220,7 +219,6 @@ export default function StudyScreen({ openSidebar }) {
     );
   }
 
-  // Patch 2: Updated groupedNotes logic to map names and pass along the subject icon
   const groupedNotes = subjects
     .filter((s) => s.name !== "All")
     .map((subjectObj) => ({
@@ -709,7 +707,6 @@ function Tab({
   );
 }
 
-style={menuBtn}
 function SubjectCard({
   name,
   count,
@@ -749,7 +746,7 @@ function SubjectCard({
       <div
         style={{
           fontWeight: "800",
-        }}
+         }}
       >
         {name}
       </div>
@@ -945,3 +942,11 @@ const titleStyle = {
   color: "#6D28D9",
 };
 
+const tabsContainer = {
+  display: "flex",
+  justifyContent: "space-between",
+  background: "white",
+  padding: "10px",
+  borderRadius: "18px",
+  boxShadow:
+    "0 10px 30px rgba(0,0,
