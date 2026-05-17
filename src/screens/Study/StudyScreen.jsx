@@ -72,6 +72,32 @@ export default function StudyScreen({ openSidebar }) {
     },
   ]);
 
+  const [flashcards] = useState([
+    {
+      id: 1,
+      question: "What is photosynthesis?",
+      answer: "Process plants use to create energy.",
+      type: "Q&A",
+      subject: "Biology",
+    },
+
+    {
+      id: 2,
+      question: "Mitochondria is powerhouse?",
+      answer: "True",
+      type: "True/False",
+      subject: "Biology",
+    },
+
+    {
+      id: 3,
+      question: "2x + 2 = 4?",
+      answer: "True",
+      type: "True/False",
+      subject: "Maths",
+    },
+  ]);
+
   // Patch 1: Updated subjects structure with icons and colors
   const subjects = [
     {
@@ -121,6 +147,11 @@ export default function StudyScreen({ openSidebar }) {
       return subjectMatch && typeMatch;
     });
   }, [notes, selectedSubject, filter]);
+
+  function handleTabChange(tabName) {
+    setActiveTab(tabName);
+    setFilter("All");
+  }
 
   function openCreateModal() {
     setEditingId(null);
@@ -236,52 +267,40 @@ export default function StudyScreen({ openSidebar }) {
       </div>
 
       {/* TABS */}
-      {/* Patch 5: Made all top tabs functional with explicit handlers */}
       <div style={tabsContainer}>
         <Tab
           icon="➕"
           label="Create"
           active={activeTab === "create"}
-          onClick={() => {
-            setActiveTab("create");
-            openCreateModal();
-          }}
+          onClick={() => handleTabChange("create")}
         />
 
         <Tab
           icon="📘"
           label="Notes"
           active={activeTab === "notes"}
-          onClick={() =>
-            setActiveTab("notes")
-          }
+          onClick={() => handleTabChange("notes")}
         />
 
         <Tab
           icon="📖"
           label="Flashcards"
           active={activeTab === "flashcards"}
-          onClick={() =>
-            setActiveTab("flashcards")
-          }
+          onClick={() => handleTabChange("flashcards")}
         />
 
         <Tab
           icon="🧪"
           label="Quiz"
           active={activeTab === "quiz"}
-          onClick={() =>
-            setActiveTab("quiz")
-          }
+          onClick={() => handleTabChange("quiz")}
         />
 
         <Tab
           icon="🎓"
           label="Learn"
           active={activeTab === "learn"}
-          onClick={() =>
-            setActiveTab("learn")
-          }
+          onClick={() => handleTabChange("learn")}
         />
       </div>
 
@@ -291,7 +310,6 @@ export default function StudyScreen({ openSidebar }) {
           SUBJECTS
         </h2>
 
-        {/* Patch 4: Made "View all" interactive and responsive */}
         <span
           style={{
             ...viewAll,
@@ -306,7 +324,6 @@ export default function StudyScreen({ openSidebar }) {
       </div>
 
       <div style={subjectsRow}>
-        {/* Patch 3: Render and map redesigned multi-prop SubjectCards */}
         {subjects
           .filter((s) => s.name !== "All")
           .map((subject) => (
@@ -331,10 +348,14 @@ export default function StudyScreen({ openSidebar }) {
           ))}
       </div>
 
-      {/* NOTES HEADER */}
+      {/* DYNAMIC SECTION TITLE HEADER */}
       <div style={notesHeader}>
         <h2 style={sectionTitle}>
-          NOTES
+          {activeTab === "create" && "CREATE STUDY CONTENT"}
+          {activeTab === "notes" && "NOTES"}
+          {activeTab === "flashcards" && "FLASHCARDS"}
+          {activeTab === "quiz" && "QUIZZES"}
+          {activeTab === "learn" && "LEARN"}
         </h2>
 
         <SlidersHorizontal
@@ -343,25 +364,67 @@ export default function StudyScreen({ openSidebar }) {
         />
       </div>
 
-      {/* FILTERS */}
+      {/* DYNAMIC FILTER CHIPS */}
       <div style={filterRow}>
-        {[
-          "All",
-          "Plain",
-          "Enhanced",
-        ].map((f) => (
+        {(
+          activeTab === "notes"
+            ? ["All", "Plain", "Enhanced"]
+            : activeTab === "flashcards"
+            ? ["All", "True/False", "Q&A"]
+            : activeTab === "quiz"
+            ? ["All", "Easy", "Hard"]
+            : ["All"]
+        ).map((f) => (
           <Chip
             key={f}
             label={f}
             active={filter === f}
-            onClick={() =>
-              setFilter(f)
-            }
+            onClick={() => setFilter(f)}
           />
         ))}
       </div>
 
       {/* SCREEN CONTENT */}
+      {activeTab === "create" && (
+        <div style={placeholderStyle}>
+          <div style={{ fontSize: "52px" }}>➕</div>
+          <h2>Create Study Content</h2>
+          <p>Choose what you want to create.</p>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              marginTop: "20px",
+            }}
+          >
+            <button onClick={openCreateModal} style={saveBtn}>
+              Create Note
+            </button>
+
+            <button
+              style={{
+                ...saveBtn,
+                background:
+                  "linear-gradient(135deg,#2563EB,#06B6D4)",
+              }}
+            >
+              Create Flashcard
+            </button>
+
+            <button
+              style={{
+                ...saveBtn,
+                background:
+                  "linear-gradient(135deg,#F97316,#EF4444)",
+              }}
+            >
+              Create Quiz
+            </button>
+          </div>
+        </div>
+      )}
+
       {activeTab === "notes" && (
         <>
           {groupedNotes.map((group) => (
@@ -389,11 +452,82 @@ export default function StudyScreen({ openSidebar }) {
       )}
 
       {activeTab === "flashcards" && (
-        <div style={placeholderStyle}>
-          <div style={{ fontSize: "48px" }}>📖</div>
-          <h2>Flashcards</h2>
-          <p>Create smart revision cards here.</p>
-        </div>
+        <>
+          {subjects
+            .filter((s) => s.name !== "All")
+            .map((subjectObj) => {
+              const subjectCards = flashcards.filter(
+                (f) =>
+                  f.subject === subjectObj.name &&
+                  (filter === "All" ? true : f.type === filter)
+              );
+
+              if (!subjectCards.length) return null;
+
+              return (
+                <div key={subjectObj.name} style={{ marginBottom: "18px" }}>
+                  <div
+                    style={{
+                      fontWeight: "800",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    {subjectObj.icon} {subjectObj.name}
+                    <span
+                      style={{
+                        color: "#9CA3AF",
+                      }}
+                    >
+                      {" "}
+                      • {subjectCards.length} cards
+                    </span>
+                  </div>
+
+                  {subjectCards.map((card) => (
+                    <div
+                      key={card.id}
+                      style={{
+                        background: "white",
+                        padding: "16px",
+                        borderRadius: "18px",
+                        marginBottom: "10px",
+                        boxShadow: "0 10px 25px rgba(0,0,0,0.04)",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontWeight: "800",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        {card.question}
+                      </div>
+
+                      <div
+                        style={{
+                          color: "#6B7280",
+                          fontSize: "14px",
+                        }}
+                      >
+                        {card.answer}
+                      </div>
+
+                      <div
+                        style={{
+                          marginTop: "10px",
+                          fontSize: "12px",
+                          color: "#7C3AED",
+                          fontWeight: "700",
+                        }}
+                      >
+                        {card.type}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+        </>
       )}
 
       {activeTab === "quiz" && (
@@ -575,6 +709,7 @@ function Tab({
   );
 }
 
+style={menuBtn}
 function SubjectCard({
   name,
   count,
@@ -810,115 +945,4 @@ const titleStyle = {
   color: "#6D28D9",
 };
 
-const tabsContainer = {
-  display: "flex",
-  justifyContent: "space-between",
-  background: "white",
-  padding: "10px",
-  borderRadius: "18px",
-  boxShadow:
-    "0 10px 30px rgba(0,0,0,0.05)",
-  marginBottom: "22px",
-};
-
-const sectionHeader = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: "14px",
-};
-
-const sectionTitle = {
-  margin: 0,
-  fontSize: "16px",
-  fontWeight: "800",
-};
-
-const viewAll = {
-  color: "#7C3AED",
-  fontWeight: "700",
-  fontSize: "13px",
-};
-
-const subjectsRow = {
-  display: "flex",
-  gap: "12px",
-  overflowX: "auto",
-  paddingBottom: "8px",
-};
-
-const notesHeader = {
-  marginTop: "24px",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-};
-
-const filterRow = {
-  display: "flex",
-  gap: "10px",
-  marginTop: "12px",
-  marginBottom: "18px",
-};
-
-const floatingBtn = {
-  position: "fixed",
-  right: "18px",
-  bottom: "18px",
-  width: "58px",
-  height: "58px",
-  borderRadius: "20px",
-  border: "none",
-  background:
-    "linear-gradient(135deg,#7C3AED,#2563EB)",
-  color: "white",
-  fontSize: "26px",
-  boxShadow:
-    "0 18px 40px rgba(124,77,255,0.35)",
-};
-
-const modalOverlay = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(0,0,0,0.4)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 999,
-};
-
-const modalBox = {
-  width: "90%",
-  maxWidth: "400px",
-  background: "white",
-  borderRadius: "24px",
-  padding: "20px",
-};
-
-const modalHeader = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: "14px",
-};
-
-const inputStyle = {
-  width: "100%",
-  padding: "12px",
-  borderRadius: "14px",
-  border: "1px solid #E5E7EB",
-  marginBottom: "12px",
-  boxSizing: "border-box",
-};
-
-const saveBtn = {
-  width: "100%",
-  padding: "14px",
-  borderRadius: "16px",
-  border: "none",
-  background:
-    "linear-gradient(135deg,#7C3AED,#2563EB)",
-  color: "white",
-  fontWeight: "800",
-};
-        
+const tabsContainer
