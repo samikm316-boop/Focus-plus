@@ -1,14 +1,28 @@
-import { useEffect, useState } from "react";
-import { loadStudyData, saveStudyData } from "../utils/studyStorage";
+import { useState, useEffect } from "react";
 
-export default function useStudyStorage(key, initialData) {
-  const [data, setData] = useState(() =>
-    loadStudyData(key, initialData)
-  );
+export default function useStudyStorage(key, defaultValue) {
+  const [value, setValue] = useState(() => {
+    try {
+      const saved = localStorage.getItem(key);
+
+      if (saved) {
+        return JSON.parse(saved);
+      }
+
+      return defaultValue;
+    } catch (error) {
+      console.error("Storage parse error:", error);
+      return defaultValue;
+    }
+  });
 
   useEffect(() => {
-    saveStudyData(key, data);
-  }, [key, data]);
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      console.error("Storage save error:", error);
+    }
+  }, [key, value]);
 
-  return [data, setData];
+  return [value, setValue];
 }
