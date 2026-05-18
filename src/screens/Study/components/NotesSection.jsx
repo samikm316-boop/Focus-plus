@@ -1,7 +1,15 @@
 import React, { useMemo } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
-export default function NotesSection({ notes, subjects, selectedSubject, filter, onEdit, onDelete }) {
+export default function NotesSection({
+  notes,
+  subjects,
+  selectedSubject,
+  filter,
+  onEdit,
+  onDelete,
+  onView,
+}) {
   
   const filteredNotes = useMemo(() => {
     return notes.filter((note) => {
@@ -41,15 +49,34 @@ export default function NotesSection({ notes, subjects, selectedSubject, filter,
           </div>
 
           {group.notesList.map((note) => (
-            <div key={note.id} style={styles.noteCard}>
+            <div
+              key={note.id}
+              style={styles.noteCard}
+              onClick={() => onView(note)}
+            >
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div>
                   <div style={{ fontWeight: "800" }}>{note.title}</div>
                   <div style={{ fontSize: "13px", color: "#666", marginTop: "6px" }}>{note.content}</div>
                 </div>
                 <div style={{ display: "flex", gap: "10px" }}>
-                  <Pencil size={16} style={{ cursor: "pointer" }} onClick={() => onEdit(note)} />
-                  <Trash2 size={16} color="red" style={{ cursor: "pointer" }} onClick={() => onDelete(note.id)} />
+                  <Pencil
+                    size={16}
+                    style={{ cursor: "pointer" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit(note);
+                    }}
+                  />
+                  <Trash2
+                    size={16}
+                    color="red"
+                    style={{ cursor: "pointer" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(note.id);
+                    }}
+                  />
                 </div>
               </div>
               <div style={styles.noteFooter}>
@@ -66,8 +93,15 @@ export default function NotesSection({ notes, subjects, selectedSubject, filter,
 
 const styles = {
   groupHeader: { marginBottom: "10px", fontWeight: "800" },
-  noteCard: { background: "white", padding: "14px", borderRadius: "16px", marginBottom: "10px", boxShadow: "0 10px 25px rgba(0,0,0,0.04)" },
+  noteCard: { 
+    background: "white", 
+    padding: "14px", 
+    borderRadius: "16px", 
+    marginBottom: "10px", 
+    boxShadow: "0 10px 25px rgba(0,0,0,0.04)",
+    cursor: "pointer",
+    transition: "0.2s",
+  },
   noteFooter: { display: "flex", justifyContent: "space-between", marginTop: "10px", fontSize: "12px", color: "#6B7280" },
   emptyState: { textAlign: "center", padding: "40px 20px", color: "#6B7280", fontWeight: "600", fontSize: "14px" }
 };
-  
