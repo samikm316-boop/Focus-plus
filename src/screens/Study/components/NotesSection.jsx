@@ -105,3 +105,4 @@ const styles = {
   noteFooter: { display: "flex", justifyContent: "space-between", marginTop: "10px", fontSize: "12px", color: "#6B7280" },
   emptyState: { textAlign: "center", padding: "40px 20px", color: "#6B7280", fontWeight: "600", fontSize: "14px" }
 };
+
