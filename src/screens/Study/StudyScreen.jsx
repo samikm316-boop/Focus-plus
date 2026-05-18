@@ -6,6 +6,7 @@ import FilterChips from "./components/FilterChips";
 import NotesSection from "./components/NotesSection";
 import FlashcardsSection from "./components/FlashcardsSection";
 import CreateModal from "./components/CreateModal";
+import useStudyStorage from "./hooks/useStudyStorage";
 
 export default function StudyScreen({ openSidebar }) {
   const [activeTab, setActiveTab] = useState("notes");
@@ -15,64 +16,74 @@ export default function StudyScreen({ openSidebar }) {
   const [editingNote, setEditingNote] = useState(null);
 
   // Core App State (Your exact mock data)
-  const [notes, setNotes] = useState([
-    {
-      id: 1,
-      title: "Cell Structure and Function",
-      content: "Cells contain nucleus, mitochondria and ribosomes.",
-      type: "Plain",
-      subject: "Biology",
-      date: "20 May",
-    },
-    {
-      id: 2,
-      title: "Photosynthesis Process",
-      content: "Plants convert sunlight into energy.",
-      type: "Enhanced",
-      subject: "Biology",
-      date: "18 May",
-    },
-    {
-      id: 3,
-      title: "Quadratic Equations",
-      content: "ax² + bx + c = 0",
-      type: "Plain",
-      subject: "Maths",
-      date: "19 May",
-    },
-    {
-      id: 4,
-      title: "World War 2 Overview",
-      content: "Started in 1939.",
-      type: "Plain",
-      subject: "History",
-      date: "16 May",
-    },
-  ]);
+const defaultNotes = [
+  {
+    id: crypto.randomUUID(),
+    title: "Cell Structure and Function",
+    content: "Cells contain nucleus, mitochondria and ribosomes.",
+    type: "Plain",
+    subject: "Biology",
+    date: "20 May",
+  },
+  {
+    id: crypto.randomUUID(),
+    title: "Photosynthesis Process",
+    content: "Plants convert sunlight into energy.",
+    type: "Enhanced",
+    subject: "Biology",
+    date: "18 May",
+  },
+  {
+    id: crypto.randomUUID(),
+    title: "Quadratic Equations",
+    content: "ax² + bx + c = 0",
+    type: "Plain",
+    subject: "Maths",
+    date: "19 May",
+  },
+  {
+    id: crypto.randomUUID(),
+    title: "World War 2 Overview",
+    content: "Started in 1939.",
+    type: "Plain",
+    subject: "History",
+    date: "16 May",
+  },
+];
 
-  const [flashcards] = useState([
-    {
-      id: 1,
-      question: "What is photosynthesis?",
-      answer: "Process plants use to create energy.",
-      type: "Q&A",
-      subject: "Biology",
-    },
-    {
-      id: 2,
-      question: "Mitochondria is powerhouse?",
-      answer: "True",
-      type: "True/False",
-      subject: "Biology",
-    },
-    {
-      id: 3,
-      question: "2x + 2 = 4?",
-      answer: "True",
-      type: "True/False",
-      subject: "Maths",
-    },
-  ]);
+const [notes, setNotes] = useStudyStorage(
+  "focusplus_notes",
+  defaultNotes
+);
+
+const defaultFlashcards = [
+  {
+    id: crypto.randomUUID(),
+    question: "What is photosynthesis?",
+    answer: "Process plants use to create energy.",
+    type: "Q&A",
+    subject: "Biology",
+  },
+  {
+    id: crypto.randomUUID(),
+    question: "Mitochondria is powerhouse?",
+    answer: "True",
+    type: "True/False",
+    subject: "Biology",
+  },
+  {
+    id: crypto.randomUUID(),
+    question: "2x + 2 = 4?",
+    answer: "True",
+    type: "True/False",
+    subject: "Maths",
+  },
+];
+
+const [flashcards] = useStudyStorage(
+  "focusplus_flashcards",
+  defaultFlashcards
+);
 
   const subjects = [
     { name: "All", icon: "📚", color: "#E5E7EB" },
