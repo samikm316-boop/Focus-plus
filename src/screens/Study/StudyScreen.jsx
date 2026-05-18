@@ -1,11 +1,13 @@
-import React, { useState } from "react"; // Fix #2: Removed useMemo import
+import React, { useState } from "react";
 import { Menu, SlidersHorizontal, Plus } from "lucide-react";
+
 import StudyTabs from "./components/StudyTabs";
 import SubjectBar from "./components/SubjectBar";
 import FilterChips from "./components/FilterChips";
 import NotesSection from "./components/NotesSection";
 import FlashcardsSection from "./components/FlashcardsSection";
 import CreateModal from "./components/CreateModal";
+
 import useStudyStorage from "./hooks/useStudyStorage";
 
 export default function StudyScreen({ openSidebar }) {
@@ -15,76 +17,78 @@ export default function StudyScreen({ openSidebar }) {
   const [showModal, setShowModal] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
 
-  // Core App State (Your exact mock data)
-const defaultNotes = [
-  {
-    id: crypto.randomUUID(),
-    title: "Cell Structure and Function",
-    content: "Cells contain nucleus, mitochondria and ribosomes.",
-    type: "Plain",
-    subject: "Biology",
-    date: "20 May",
-  },
-  {
-    id: crypto.randomUUID(),
-    title: "Photosynthesis Process",
-    content: "Plants convert sunlight into energy.",
-    type: "Enhanced",
-    subject: "Biology",
-    date: "18 May",
-  },
-  {
-    id: crypto.randomUUID(),
-    title: "Quadratic Equations",
-    content: "ax² + bx + c = 0",
-    type: "Plain",
-    subject: "Maths",
-    date: "19 May",
-  },
-  {
-    id: crypto.randomUUID(),
-    title: "World War 2 Overview",
-    content: "Started in 1939.",
-    type: "Plain",
-    subject: "History",
-    date: "16 May",
-  },
-];
+  // NOTES STORAGE
+  const defaultNotes = [
+    {
+      id: crypto.randomUUID(),
+      title: "Cell Structure and Function",
+      content: "Cells contain nucleus, mitochondria and ribosomes.",
+      type: "Plain",
+      subject: "Biology",
+      date: "20 May",
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Photosynthesis Process",
+      content: "Plants convert sunlight into energy.",
+      type: "Enhanced",
+      subject: "Biology",
+      date: "18 May",
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Quadratic Equations",
+      content: "ax² + bx + c = 0",
+      type: "Plain",
+      subject: "Maths",
+      date: "19 May",
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "World War 2 Overview",
+      content: "Started in 1939.",
+      type: "Plain",
+      subject: "History",
+      date: "16 May",
+    },
+  ];
 
-const [notes, setNotes] = useStudyStorage(
-  "focusplus_notes",
-  defaultNotes
-);
+  const [notes, setNotes] = useStudyStorage(
+    "focusplus_notes",
+    defaultNotes
+  );
 
-const defaultFlashcards = [
-  {
-    id: crypto.randomUUID(),
-    question: "What is photosynthesis?",
-    answer: "Process plants use to create energy.",
-    type: "Q&A",
-    subject: "Biology",
-  },
-  {
-    id: crypto.randomUUID(),
-    question: "Mitochondria is powerhouse?",
-    answer: "True",
-    type: "True/False",
-    subject: "Biology",
-  },
-  {
-    id: crypto.randomUUID(),
-    question: "2x + 2 = 4?",
-    answer: "True",
-    type: "True/False",
-    subject: "Maths",
-  },
-];
+  // FLASHCARDS STORAGE
+  const defaultFlashcards = [
+    {
+      id: crypto.randomUUID(),
+      question: "What is photosynthesis?",
+      answer: "Process plants use to create energy.",
+      type: "Q&A",
+      subject: "Biology",
+    },
+    {
+      id: crypto.randomUUID(),
+      question: "Mitochondria is powerhouse?",
+      answer: "True",
+      type: "True/False",
+      subject: "Biology",
+    },
+    {
+      id: crypto.randomUUID(),
+      question: "2x + 2 = 4?",
+      answer: "True",
+      type: "True/False",
+      subject: "Maths",
+    },
+  ];
 
-const [flashcards] = useStudyStorage(
-  "focusplus_flashcards",
-  defaultFlashcards
-);
+  const [flashcards, setFlashcards] = useStudyStorage(
+    "focusplus_flashcards",
+    defaultFlashcards
+  );
 
+  // SUBJECTS
   const subjects = [
     { name: "All", icon: "📚", color: "#E5E7EB" },
     { name: "Biology", icon: "🌿", color: "#DCFCE7" },
@@ -93,35 +97,43 @@ const [flashcards] = useStudyStorage(
     { name: "Chemistry", icon: "🧪", color: "#EDE9FE" },
   ];
 
-  // Actions & Event Handlers
+  // TAB SWITCH
   const handleTabChange = (tabName) => {
     setActiveTab(tabName);
     setFilter("All");
   };
 
+  // OPEN CREATE MODAL
   const openCreateModal = () => {
     setEditingNote(null);
     setShowModal(true);
   };
 
+  // EDIT NOTE
   const handleEditNote = (note) => {
     setEditingNote(note);
     setShowModal(true);
   };
 
+  // DELETE NOTE
   const handleDeleteNote = (id) => {
-    setNotes((prev) => prev.filter((n) => n.id !== id));
+    setNotes((prev) => prev.filter((note) => note.id !== id));
   };
 
+  // SAVE NOTE
   const handleSaveNote = (formValues) => {
     if (editingNote) {
       setNotes((prev) =>
-        prev.map((n) => (n.id === editingNote.id ? { ...n, ...formValues } : n))
+        prev.map((note) =>
+          note.id === editingNote.id
+            ? { ...note, ...formValues }
+            : note
+        )
       );
     } else {
       setNotes((prev) => [
         {
-          id: Date.now(),
+          id: crypto.randomUUID(),
           ...formValues,
           date: new Date().toLocaleDateString("en-GB", {
             day: "numeric",
@@ -131,7 +143,9 @@ const [flashcards] = useStudyStorage(
         ...prev,
       ]);
     }
+
     setShowModal(false);
+    setEditingNote(null);
   };
 
   return (
@@ -141,12 +155,17 @@ const [flashcards] = useStudyStorage(
         <button onClick={openSidebar} style={styles.menuBtn}>
           <Menu size={22} />
         </button>
+
         <h1 style={styles.titleStyle}>STUDY</h1>
+
         <div style={{ width: "44px" }} />
       </div>
 
       {/* TABS */}
-      <StudyTabs activeTab={activeTab} onTabChange={handleTabChange} />
+      <StudyTabs
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       {/* SUBJECTS */}
       <SubjectBar
@@ -156,7 +175,7 @@ const [flashcards] = useStudyStorage(
         setSelectedSubject={setSelectedSubject}
       />
 
-      {/* DYNAMIC SECTION TITLE HEADER */}
+      {/* SECTION HEADER */}
       <div style={styles.notesHeader}>
         <h2 style={styles.sectionTitle}>
           {activeTab === "create" && "CREATE STUDY CONTENT"}
@@ -165,26 +184,65 @@ const [flashcards] = useStudyStorage(
           {activeTab === "quiz" && "QUIZZES"}
           {activeTab === "learn" && "LEARN"}
         </h2>
+
         <SlidersHorizontal size={18} color="#6B7280" />
       </div>
 
-      {/* DYNAMIC FILTER CHIPS */}
-      <FilterChips activeTab={activeTab} filter={filter} setFilter={setFilter} />
+      {/* FILTER CHIPS */}
+      <FilterChips
+        activeTab={activeTab}
+        filter={filter}
+        setFilter={setFilter}
+      />
 
-      {/* SCREEN CONTENT CONDITIONAL RENDERING */}
+      {/* CREATE TAB */}
       {activeTab === "create" && (
         <div style={styles.placeholderStyle}>
           <div style={{ fontSize: "52px" }}>➕</div>
+
           <h2>Create Study Content</h2>
+
           <p>Choose what you want to create.</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "20px" }}>
-            <button onClick={openCreateModal} style={styles.saveBtn}>Create Note</button>
-            <button style={{ ...styles.saveBtn, background: "linear-gradient(135deg,#2563EB,#06B6D4)" }}>Create Flashcard</button>
-            <button style={{ ...styles.saveBtn, background: "linear-gradient(135deg,#F97316,#EF4444)" }}>Create Quiz</button>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              marginTop: "20px",
+            }}
+          >
+            <button
+              onClick={openCreateModal}
+              style={styles.saveBtn}
+            >
+              Create Note
+            </button>
+
+            <button
+              style={{
+                ...styles.saveBtn,
+                background:
+                  "linear-gradient(135deg,#2563EB,#06B6D4)",
+              }}
+            >
+              Create Flashcard
+            </button>
+
+            <button
+              style={{
+                ...styles.saveBtn,
+                background:
+                  "linear-gradient(135deg,#F97316,#EF4444)",
+              }}
+            >
+              Create Quiz
+            </button>
           </div>
         </div>
       )}
 
+      {/* NOTES */}
       {activeTab === "notes" && (
         <NotesSection
           notes={notes}
@@ -196,6 +254,7 @@ const [flashcards] = useStudyStorage(
         />
       )}
 
+      {/* FLASHCARDS */}
       {activeTab === "flashcards" && (
         <FlashcardsSection
           flashcards={flashcards}
@@ -205,32 +264,44 @@ const [flashcards] = useStudyStorage(
         />
       )}
 
+      {/* QUIZ */}
       {activeTab === "quiz" && (
         <div style={styles.placeholderStyle}>
           <div style={{ fontSize: "48px" }}>🧪</div>
+
           <h2>Quiz Mode</h2>
+
           <p>Generate quizzes from notes.</p>
         </div>
       )}
 
+      {/* LEARN */}
       {activeTab === "learn" && (
         <div style={styles.placeholderStyle}>
           <div style={{ fontSize: "48px" }}>🎓</div>
+
           <h2>Learn AI</h2>
+
           <p>AI explanations and tutoring system.</p>
         </div>
       )}
 
-      {/* FLOATING ACTION BUTTON */}
-      <button onClick={openCreateModal} style={styles.floatingBtn}>
+      {/* FLOATING BUTTON */}
+      <button
+        onClick={openCreateModal}
+        style={styles.floatingBtn}
+      >
         <Plus />
       </button>
 
-      {/* REUSABLE CRUD MODAL */}
+      {/* MODAL */}
       {showModal && (
         <CreateModal
           editingNote={editingNote}
-          onClose={() => setShowModal(false)}
+          onClose={() => {
+            setShowModal(false);
+            setEditingNote(null);
+          }}
           onSave={handleSaveNote}
         />
       )}
@@ -246,12 +317,14 @@ const styles = {
     paddingBottom: "120px",
     boxSizing: "border-box",
   },
+
   topBar: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: "18px",
   },
+
   menuBtn: {
     width: "44px",
     height: "44px",
@@ -264,23 +337,27 @@ const styles = {
     justifyContent: "center",
     cursor: "pointer",
   },
+
   titleStyle: {
     margin: 0,
     fontSize: "20px",
     fontWeight: "800",
     color: "#6D28D9",
   },
+
   notesHeader: {
     marginTop: "24px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
   },
+
   sectionTitle: {
     margin: 0,
     fontSize: "16px",
     fontWeight: "800",
   },
+
   placeholderStyle: {
     background: "white",
     borderRadius: "24px",
@@ -289,6 +366,7 @@ const styles = {
     textAlign: "center",
     boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
   },
+
   saveBtn: {
     width: "100%",
     padding: "14px",
@@ -299,10 +377,10 @@ const styles = {
     fontWeight: "800",
     cursor: "pointer",
   },
+
   floatingBtn: {
     position: "fixed",
     right: "18px",
-    // Fix #5: Avoid overlapping device system navigation overlays on virtual screen spaces
     bottom: "calc(18px + env(safe-area-inset-bottom))",
     width: "58px",
     height: "58px",
