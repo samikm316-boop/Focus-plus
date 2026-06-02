@@ -1,8 +1,8 @@
 const API_BASE = "https://focus-plus.onrender.com/api";
 
-/* -----------------------------
-   CORE FETCH WRAPPER
------------------------------- */
+/* =================================================
+   CORE REQUEST HANDLER
+================================================= */
 async function request(endpoint, options = {}) {
   try {
     const token = localStorage.getItem("token");
@@ -19,76 +19,94 @@ async function request(endpoint, options = {}) {
     const data = await res.json().catch(() => null);
 
     if (!res.ok) {
-      throw new Error(data?.message || "API request failed");
+      throw new Error(data?.message || `API Error: ${endpoint}`);
     }
 
     return data;
   } catch (err) {
-    console.error("API Error:", err.message);
+    console.error("Focus+ API Error:", err.message);
     throw err;
   }
 }
 
-/* -----------------------------
-   NOTES
------------------------------- */
+/* =================================================
+   NOTES (Backend: study module)
+================================================= */
 
-export async function fetchNotes() {
+export function fetchNotes() {
   return request("/study/notes", {
     method: "GET",
   });
 }
 
-export async function createNote(noteData) {
+export function createNote(noteData) {
   return request("/study/notes", {
     method: "POST",
     body: JSON.stringify(noteData),
   });
 }
 
-export async function updateNote(id, noteData) {
+export function updateNote(id, noteData) {
   return request(`/study/notes/${id}`, {
     method: "PUT",
     body: JSON.stringify(noteData),
   });
 }
 
-export async function deleteNote(id) {
-  await request(`/study/notes/${id}`, {
+export function deleteNote(id) {
+  return request(`/study/notes/${id}`, {
     method: "DELETE",
   });
-
-  return true;
 }
 
-/* -----------------------------
-   FLASHCARDS
------------------------------- */
+/* =================================================
+   FLASHCARDS (Backend: study module)
+================================================= */
 
-export async function fetchFlashcards() {
+export function fetchFlashcards() {
   return request("/study/flashcards", {
     method: "GET",
   });
 }
 
-export async function createFlashcard(data) {
+export function createFlashcard(data) {
   return request("/study/flashcards", {
     method: "POST",
     body: JSON.stringify(data),
   });
 }
 
-/* -----------------------------
-   FUTURE READY (PLACEHOLDERS)
------------------------------- */
+/* =================================================
+   XP SYSTEM (Backend: xp module)
+================================================= */
 
-export async function fetchQuizzes() {
+export function fetchXP() {
+  return request("/xp", {
+    method: "GET",
+  });
+}
+
+/* =================================================
+   USER SYSTEM
+================================================= */
+
+export function fetchUserProfile() {
+  return request("/users/me", {
+    method: "GET",
+  });
+}
+
+/* =================================================
+   FUTURE MODULES (QUIZ + LEARN READY)
+================================================= */
+
+export function fetchQuizzes() {
   return request("/study/quizzes", {
     method: "GET",
   });
 }
 
-export async function fetchMastery() {
+export function fetchMastery() {
   return request("/mastery", {
     method: "GET",
   });
