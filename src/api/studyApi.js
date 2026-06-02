@@ -1,65 +1,95 @@
 const API_BASE = "https://focus-plus.onrender.com/api";
 
-export async function fetchNotes() {
-  const res = await fetch(`${API_BASE}/notes`);
+/* -----------------------------
+   CORE FETCH WRAPPER
+------------------------------ */
+async function request(endpoint, options = {}) {
+  try {
+    const token = localStorage.getItem("token");
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch notes");
+    const res = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(options.headers || {}),
+      },
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      throw new Error(data?.message || "API request failed");
+    }
+
+    return data;
+  } catch (err) {
+    console.error("API Error:", err.message);
+    throw err;
   }
+}
 
-  return res.json();
+/* -----------------------------
+   NOTES
+------------------------------ */
+
+export async function fetchNotes() {
+  return request("/study/notes", {
+    method: "GET",
+  });
 }
 
 export async function createNote(noteData) {
-  const res = await fetch(`${API_BASE}/notes`, {
+  return request("/study/notes", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(noteData),
   });
-
-  if (!res.ok) {
-    throw new Error("Failed to create note");
-  }
-
-  return res.json();
 }
 
 export async function updateNote(id, noteData) {
-  const res = await fetch(`${API_BASE}/notes/${id}`, {
+  return request(`/study/notes/${id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(noteData),
   });
-
-  if (!res.ok) {
-    throw new Error("Failed to update note");
-  }
-
-  return res.json();
 }
 
 export async function deleteNote(id) {
-  const res = await fetch(`${API_BASE}/notes/${id}`, {
+  await request(`/study/notes/${id}`, {
     method: "DELETE",
   });
-
-  if (!res.ok) {
-    throw new Error("Failed to delete note");
-  }
 
   return true;
 }
 
+/* -----------------------------
+   FLASHCARDS
+------------------------------ */
+
 export async function fetchFlashcards() {
-  const res = await fetch(`${API_BASE}/flashcards`);
+  return request("/study/flashcards", {
+    method: "GET",
+  });
+}
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch flashcards");
-  }
+export async function createFlashcard(data) {
+  return request("/study/flashcards", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
 
-  return res.json();
+/* -----------------------------
+   FUTURE READY (PLACEHOLDERS)
+------------------------------ */
+
+export async function fetchQuizzes() {
+  return request("/study/quizzes", {
+    method: "GET",
+  });
+}
+
+export async function fetchMastery() {
+  return request("/mastery", {
+    method: "GET",
+  });
 }
